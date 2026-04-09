@@ -1,18 +1,25 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Updates from "expo-updates";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { I18nManager } from "react-native";
-import * as Updates from "expo-updates";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import translationRegistry from "./utils/translationRegistry";
 
 const LANGUAGE_PREFERENCE_KEY = "user-language";
 
 // 👇 Define which languages are RTL
 const RTL_LANGUAGES = ["ar", "he", "fa", "ur"]; // Add more if needed
 
+// Derive namespace list from whatever is registered — grows automatically
+// as you add more namespaces to translationRegistry.js
+const namespaces = Object.keys(translationRegistry.en);
+
 i18n.use(initReactI18next).init({
   fallbackLng: "en",
-  lng: "ar",
-  ns: [],
+  lng: "en",
+  resources: translationRegistry, // all translations available immediately, no backend needed
+  ns: namespaces,
+  defaultNS: namespaces[0] ?? "common",
   interpolation: { escapeValue: false },
 });
 
@@ -53,7 +60,7 @@ export const setLanguage = async (lng) => {
     await AsyncStorage.setItem(LANGUAGE_PREFERENCE_KEY, lng);
     const prev = i18n.language;
     // Change i18n language
-    if(prev === lng) return;
+    if (prev === lng) return;
     await i18n.changeLanguage(lng);
 
     // Set up RTL

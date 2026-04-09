@@ -1,0 +1,24 @@
+{
+  "step1": {
+    "title": "Bring a new friend to your home",
+    "description": "Adopt a pet or help one find a loving family — all in just a few taps."
+  },
+  "step2": {
+    "title": " Find the Perfect Match",
+    "description": "Search by breed, age, size, and more to meet the right companion."
+  },
+  "step3": {
+    "title": "Ask Anything, Anytime",
+    "description": "Get instant pet care tips and advice from our smart AI assistant Pet “Pawlo”."
+  },
+  "step4": {
+    "title": "Services Near You",
+    "description": "Discover vets, pet stores, and groomers with reviews and directions."
+  },
+  "getStarted": {
+    "title": "Let’s Get Started",
+    "description": "Join Adopaw and begin your adoption journey today."
+  },
+  "next": "Continue",
+  "finish": "Get Started"
+}

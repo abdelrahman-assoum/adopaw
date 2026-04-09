@@ -7,7 +7,7 @@ module.exports = ({ config }) => {
   }
   return {
     ...config,
-    plugins: [...(config.plugins || []), "expo-font", "expo-web-browser"],
+    plugins: [...(config.plugins || []), "expo-font", "expo-web-browser", "expo-localization"],
     android: {
       config: {
         googleMaps: { apiKey: googleMapsKey || "" },

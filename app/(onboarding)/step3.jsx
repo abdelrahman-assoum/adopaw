@@ -1,9 +1,22 @@
-import { View, Text } from 'react-native';
+import { useRouter } from "expo-router";
+import OnboardingScreen from "../../src/features/onboarding/components/OnboardingScreen";
 
-export default function Step3() {
+export default function OnboardingStep3() {
+  const router = useRouter();
+
+  const goNext = () => {
+    router.push("/step4");
+  };
+
+  const goBack = () => {
+    router.back();
+  };
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Onboarding Step 3</Text>
-    </View>
+    <OnboardingScreen
+      currentStep={3}
+      namespace="onboarding"
+      onNext={goNext}
+      onPrev={goBack}
+    />
   );
 }
