@@ -37,6 +37,7 @@ export default function BootScreen() {
       // const launched = await AsyncStorage.getItem(STORAGE_KEYS.ALREADY_LAUNCHED);
       const launched = false;
       if (!launched) {
+        // router.replace("/(auth)/otp");
         router.replace("/(onboarding)");
         return;
       }

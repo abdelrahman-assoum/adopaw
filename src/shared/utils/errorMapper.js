@@ -5,7 +5,11 @@ const SUPABASE_ERROR_MAP = {
   "Password should be at least 6": "auth.errors.passwordTooShort",
   "Unable to validate email address": "auth.errors.invalidEmail",
   "Email rate limit exceeded": "auth.errors.rateLimitExceeded",
-  "Token has expired": "auth.errors.sessionExpired",
+  "Token has expired": "auth.errors.otpExpired",
+  "Otp has expired": "auth.errors.otpExpired",
+  "Invalid OTP": "auth.errors.otpInvalid",
+  "invalid otp": "auth.errors.otpInvalid",
+  "Token not found": "auth.errors.otpInvalid",
 };
 
 export function mapSupabaseError(message = "") {
