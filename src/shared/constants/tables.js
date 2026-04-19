@@ -4,4 +4,5 @@ export const TABLES = {
   CHATS: "chats",
   MESSAGES: "messages",
   PLACES: "places",
+  ADOPTION_REQUESTS: "adoption_requests",
 };

@@ -112,7 +112,8 @@
   "done": "Done",
   "location": {
     "label": "Location",
-    "current": "Tap to get you current location",
-    "specific": "Choose a specific location"
+    "current": "Tap to get your current location",
+    "specific": "Choose a specific location",
+    "loading": "Getting location..."
   }
 }

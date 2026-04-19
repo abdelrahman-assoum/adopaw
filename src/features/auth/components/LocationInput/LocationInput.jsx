@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TextInput, Text, useTheme } from "react-native-paper";
 import * as Location from "expo-location";
 import { I18nManager as RNI18nManager } from "react-native";
-import { useTranslationLoader } from "../../../../localization/hooks/useTranslationLoader";
+import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
 
 export default function LocationInput({
   onLocationRetrieved,
@@ -67,7 +67,7 @@ export default function LocationInput({
           />
 
           <TextInput
-            // value={loading ? "Getting location..." : displayAddress}
+            value={loading ? t("location.loading") : displayAddress}
             placeholder={t("location.current")}
             editable={false}
             mode="outlined"

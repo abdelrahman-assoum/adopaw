@@ -1,0 +1,78 @@
+{
+  "title": "Add Pet",
+  "editTitle": "Edit Pet",
+  "imagePick": "Click to add pet images",
+  "update": "Update",
+  "inputs": {
+    "name": {
+      "label": "Pet name",
+      "placeholder": "Enter Pet name"
+    },
+    "description": {
+      "label": "Pet Description",
+      "placeholder": "Enter Pet Description"
+    },
+    "specie": {
+      "label": "Pet Species",
+      "placeholder": "Select"
+    },
+    "breed": {
+      "label": "Pet Breed",
+      "placeholder": "Select"
+    },
+    "age": {
+      "label": "Pet Age",
+      "placeholder": "value",
+      "months": "Months",
+      "years": "Years",
+      "days": "Days"
+    },
+    "ageUnit": {
+      "placeholder": "Unit"
+    },
+    "color": {
+      "label": "Pet Color(s)",
+      "placeholder": "Select colors"
+    },
+    "size": {
+      "label": "Pet Size",
+      "placeholder": "Select",
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "activity": {
+      "label": "Pet Activity",
+      "placeholder": "Select",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "gender": {
+      "label": "Pet's Gender"
+    },
+    "health": {
+      "label": "Health Notes",
+      "sterilized": "Sterilized",
+      "vaccinated": "Vaccinated",
+      "dewormed": "Dewormed",
+      "hasPassport": "Has Passport",
+      "specialNeeds": "Special Needs"
+    }
+  },
+  "submit": "Submit",
+  "loading": "Loading…",
+  "error": "Failed to load pet data.",
+  "errors": {
+    "imagesRequired": "Please add at least one image of your pet.",
+    "nameRequired": "Please enter your pet's name.",
+    "specieRequired": "Please select the species.",
+    "colorRequired": "Please choose at least one color.",
+    "ageRequired": "Please enter the pet's age.",
+    "ageUnitRequired": "Please select the age unit.",
+    "sizeRequired": "Please select the pet's size.",
+    "activityRequired": "Please select the pet's activity level.",
+    "genderRequired": "Please select the gender.",
+    "locationRequired": "Please set the location."
+  }
+}

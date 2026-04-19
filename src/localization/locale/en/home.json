@@ -1,0 +1,57 @@
+{
+  "greeting": "Hello {{userName}},",
+  "mainMessage": "Pets waiting for you!",
+  "search": {
+    "placeholder": "Search for a pet..."
+  },
+  "age": {
+    "label": "Age",
+    "baby": "Baby (0-1 yr)",
+    "young": "Young (1-3 yrs)",
+    "adult": "Adult (3-7 yrs)",
+    "senior": "Senior (7+ yrs)"
+  },
+  "size": {
+    "label": "Size",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large"
+  },
+  "gender": {
+    "label": "Gender",
+    "male": "Male",
+    "female": "Female"
+  },
+  "activity": {
+    "label": "Activity Level",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "location": {
+    "label": "Location (km)"
+  },
+  "filters": {
+    "title": "Filters"
+  },
+  "category": {
+    "label": "Category",
+    "cat": "Cat",
+    "dog": "Dog",
+    "rabbit": "Rabbit",
+    "fish": "Fish",
+    "bird": "Bird",
+    "hamster": "Hamster",
+    "other": "Other"
+  },
+  "reset": "Reset",
+  "done": "Done",
+  "noPets": "No pets found",
+  "loading": "Loading…",
+  "tabs": {
+    "home": "Home",
+    "map": "Map",
+    "chats": "Chats",
+    "profile": "Profile"
+  }
+}

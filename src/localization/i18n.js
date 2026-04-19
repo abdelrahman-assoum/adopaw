@@ -17,6 +17,7 @@ const namespaces = Object.keys(translationRegistry.en);
 i18n.use(initReactI18next).init({
   fallbackLng: "en",
   lng: "en",
+  isRTL: false,
   resources: translationRegistry, // all translations available immediately, no backend needed
   ns: namespaces,
   defaultNS: namespaces[0] ?? "common",
