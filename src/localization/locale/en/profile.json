@@ -1,0 +1,101 @@
+{
+  "menu": {
+    "profile": "My Profile",
+    "pets": "My Pets",
+    "requests": "Requests",
+    "notifications": "Notifications",
+    "appearance": "App Appearance",
+    "invite": "Invite Friends",
+    "help": "Help Center",
+    "logout": "Log Out"
+  },
+  "profilePreview": {
+    "title": "Profile",
+    "bio": {
+      "label": "Bio",
+      "placeholder": "Tell us about yourself..."
+    },
+    "uploadButton": "Upload Picture",
+    "name": {
+      "label": "Full Name",
+      "placeholder": "Enter your name"
+    },
+    "location": {
+      "label": "Your Location",
+      "placeholder": "Get My Current Location"
+    },
+    "phone": "Phone Number",
+    "phonePlaceholder": "Enter your phone number",
+    "submit": "Save Profile"
+  },
+  "myPets": {
+    "title": "My Pets",
+    "empty": {
+      "title": "No Pets Added Yet",
+      "description": "You haven't added any pets for adoption. Start by sharing details about your pet to help them find a loving home."
+    }
+  },
+  "requests": {
+    "title": "Requests",
+    "sent": "Sent",
+    "received": "Received",
+    "empty": "No requests yet.",
+    "chat": "Chat",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "declined": "Declined",
+    "cancelConfirmTitle": "Cancel Request?",
+    "cancelConfirmMessage": "Are you sure you want to cancel this adoption request?",
+    "declineConfirmTitle": "Decline Request?",
+    "declineConfirmMessage": "Are you sure you want to decline this adoption request?"
+  },
+  "appearance": {
+    "title": "App Appearance",
+    "theme": {
+      "label": "Theme",
+      "options": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    },
+    "language": {
+      "label": "Language",
+      "options": {
+        "en": "English",
+        "ar": "Arabic"
+      }
+    }
+  },
+  "language": {
+    "change": {
+      "title": "Language Changed",
+      "message": "Language changed to {{language}}. The app will reload to apply the new layout.",
+      "error": "Failed to change language. Please try again."
+    }
+  },
+  "help": {
+    "title": "Help Center",
+    "comingSoon": "Help content coming soon."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "comingSoon": "Notification settings coming soon."
+  },
+  "error": {
+    "title": "Error",
+    "updateFailed": "Could not update profile. Please try again."
+  },
+  "logoutConfirmation": {
+    "title": "Confirm Logout",
+    "message": "Are you sure you want to log out?"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
+}

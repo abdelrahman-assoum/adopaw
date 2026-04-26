@@ -36,9 +36,12 @@ const setupRTL = async (lng, forceReload = true, prev) => {
     I18nManager.forceRTL(isRTL);
 
     if (forceReload) {
-      // Small delay to persist changes
-      setTimeout(() => {
-        Updates.reloadAsync();
+      setTimeout(async () => {
+        try {
+          await Updates.reloadAsync();
+        } catch (e) {
+          console.warn("App reload unavailable (dev mode):", e.message);
+        }
       }, 300);
     }
   }
@@ -47,9 +50,12 @@ const setupRTL = async (lng, forceReload = true, prev) => {
     I18nManager.forceRTL(isRTL);
 
     if (forceReload) {
-      // Small delay to persist changes
-      setTimeout(() => {
-        Updates.reloadAsync();
+      setTimeout(async () => {
+        try {
+          await Updates.reloadAsync();
+        } catch (e) {
+          console.warn("App reload unavailable (dev mode):", e.message);
+        }
       }, 300);
     }
   }

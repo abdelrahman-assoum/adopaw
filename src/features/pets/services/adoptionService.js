@@ -29,3 +29,80 @@ export async function fetchMyRequestForPet(petId, userId) {
   if (error) throw error;
   return data;
 }
+
+export async function fetchSentRequests(userId) {
+  const { data, error } = await supabase
+    .from(TABLES.ADOPTION_REQUESTS)
+    .select(`
+      id, status, requester_note, owner_note, created_at,
+      pet:pets!pet_id(
+        id, name, species, breed, gender, age_value, age_unit, images,
+        owner:profiles!posted_by(id, name, avatar_url)
+      )
+    `)
+    .eq("requester_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function fetchReceivedRequests(userId) {
+  const { data: myPets, error: petsError } = await supabase
+    .from(TABLES.PETS)
+    .select("id")
+    .eq("posted_by", userId);
+  if (petsError) throw petsError;
+  if (!myPets?.length) return [];
+
+  const petIds = myPets.map((p) => p.id);
+
+  const { data, error } = await supabase
+    .from(TABLES.ADOPTION_REQUESTS)
+    .select(`
+      id, status, requester_note, created_at,
+      pet:pets!pet_id(id, name, species, breed, gender, age_value, age_unit, images),
+      requester:profiles!requester_id(id, name, avatar_url)
+    `)
+    .in("pet_id", petIds)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function fetchPendingReceivedCount(userId) {
+  const { data: myPets } = await supabase
+    .from(TABLES.PETS)
+    .select("id")
+    .eq("posted_by", userId);
+  if (!myPets?.length) return 0;
+
+  const { count, error } = await supabase
+    .from(TABLES.ADOPTION_REQUESTS)
+    .select("id", { count: "exact", head: true })
+    .in("pet_id", myPets.map((p) => p.id))
+    .eq("status", "pending");
+  if (error) throw error;
+  return count ?? 0;
+}
+
+export async function acceptAdoptionRequest(requestId) {
+  const { data, error } = await supabase
+    .from(TABLES.ADOPTION_REQUESTS)
+    .update({ status: "accepted" })
+    .eq("id", requestId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function declineAdoptionRequest(requestId) {
+  const { data, error } = await supabase
+    .from(TABLES.ADOPTION_REQUESTS)
+    .update({ status: "declined" })
+    .eq("id", requestId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}

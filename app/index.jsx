@@ -40,13 +40,13 @@ export default function BootScreen() {
       );
       // const launched = false;
       if (!launched) {
-        router.replace("/(auth)/otp");
-        // router.replace("/(onboarding)");
+        // router.replace("/(auth)/otp");
+        router.replace("/(onboarding)");
         return;
       }
 
-      // const session = await getCurrentSession();
-      const session = null;
+      const session = await getCurrentSession();
+      // const session = null;
       if (!session?.access_token) {
         router.replace("/login");
         return;

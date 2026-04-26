@@ -6,6 +6,7 @@ const translationRegistry = {
     home: require("../locale/en/home.json"),
     petdetails: require("../locale/en/petdetails.json"),
     addPet: require("../locale/en/addPet.json"),
+    profile: require("../locale/en/profile.json"),
   },
   ar: {
     onboarding: require("../locale/ar/onboarding.json"),
@@ -14,6 +15,7 @@ const translationRegistry = {
     home: require("../locale/ar/home.json"),
     petdetails: require("../locale/ar/petdetails.json"),
     addPet: require("../locale/ar/addPet.json"),
+    profile: require("../locale/ar/profile.json"),
   },
 };
 

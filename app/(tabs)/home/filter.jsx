@@ -80,7 +80,7 @@ export default function FilterScreen() {
   };
 
   const handleApply = () => {
-    router.push({
+    router.dismissTo({
       pathname: "/(tabs)/home",
       params: {
         species:  selectedCategory.join(","),

@@ -1,0 +1,101 @@
+{
+  "menu": {
+    "profile": "ملفي الشخصي",
+    "pets": "حيواناتي الأليفة",
+    "requests": "الطلبات",
+    "notifications": "الإشعارات",
+    "appearance": "مظهر التطبيق",
+    "invite": "دعوة الأصدقاء",
+    "help": "مركز المساعدة",
+    "logout": "تسجيل الخروج"
+  },
+  "profilePreview": {
+    "title": "الملف الشخصي",
+    "bio": {
+      "label": "وصف",
+      "placeholder": "تكلم عن نفسك..."
+    },
+    "uploadButton": "رفع صورة",
+    "name": {
+      "label": "الاسم الكامل",
+      "placeholder": "أدخل اسمك"
+    },
+    "location": {
+      "label": "موقعك",
+      "placeholder": "الحصول على موقعي الحالي"
+    },
+    "phone": "رقم الهاتف",
+    "phonePlaceholder": "أدخل رقم هاتفك",
+    "submit": "حفظ الملف"
+  },
+  "myPets": {
+    "title": "حيواناتي الأليفة",
+    "empty": {
+      "title": "لم تتم إضافة أي حيوانات بعد",
+      "description": "لم تقم بإضافة أي حيوانات للتبني بعد. ابدأ بمشاركة تفاصيل عن حيوانك الأليف لمساعدته في العثور على منزل محب."
+    }
+  },
+  "requests": {
+    "title": "الطلبات",
+    "sent": "المُرسَلة",
+    "received": "المُستَلَمة",
+    "empty": "لا توجد طلبات بعد.",
+    "chat": "دردشة",
+    "accept": "قبول",
+    "decline": "رفض",
+    "cancel": "إلغاء",
+    "pending": "قيد الانتظار",
+    "accepted": "مقبول",
+    "declined": "مرفوض",
+    "cancelConfirmTitle": "إلغاء الطلب؟",
+    "cancelConfirmMessage": "هل أنت متأكد أنك تريد إلغاء طلب التبني هذا؟",
+    "declineConfirmTitle": "رفض الطلب؟",
+    "declineConfirmMessage": "هل أنت متأكد أنك تريد رفض طلب التبني هذا؟"
+  },
+  "appearance": {
+    "title": "مظهر التطبيق",
+    "theme": {
+      "label": "المظهر",
+      "options": {
+        "light": "فاتح",
+        "dark": "داكن",
+        "system": "نظام"
+      }
+    },
+    "language": {
+      "label": "اللغة",
+      "options": {
+        "en": "الإنجليزية",
+        "ar": "العربية"
+      }
+    }
+  },
+  "language": {
+    "change": {
+      "title": "تم تغيير اللغة",
+      "message": "تم تغيير اللغة. سيتم إعادة تحميل التطبيق لتطبيق التخطيط الجديد.",
+      "error": "فشل تغيير اللغة. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "help": {
+    "title": "مركز المساعدة",
+    "comingSoon": "محتوى المساعدة قريباً."
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "comingSoon": "إعدادات الإشعارات قريباً."
+  },
+  "error": {
+    "title": "خطأ",
+    "updateFailed": "تعذر تحديث الملف الشخصي. يرجى المحاولة مجدداً."
+  },
+  "logoutConfirmation": {
+    "title": "تأكيد تسجيل الخروج",
+    "message": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
+  },
+  "common": {
+    "ok": "حسناً",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد"
+  }
+}

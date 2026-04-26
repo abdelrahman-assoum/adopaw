@@ -1,7 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  acceptAdoptionRequest,
   cancelAdoptionRequest,
+  declineAdoptionRequest,
   fetchMyRequestForPet,
+  fetchPendingReceivedCount,
+  fetchReceivedRequests,
+  fetchSentRequests,
   sendAdoptionRequest,
 } from "../services/adoptionService";
 
@@ -29,6 +34,53 @@ export function useCancelAdoptionRequest(petId, userId) {
     mutationFn: (requestId) => cancelAdoptionRequest(requestId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adoptionRequest", petId, userId] });
+      queryClient.invalidateQueries({ queryKey: ["sentRequests", userId] });
+    },
+  });
+}
+
+export function useSentRequests(userId) {
+  return useQuery({
+    queryKey: ["sentRequests", userId],
+    queryFn: () => fetchSentRequests(userId),
+    enabled: !!userId,
+  });
+}
+
+export function useReceivedRequests(userId) {
+  return useQuery({
+    queryKey: ["receivedRequests", userId],
+    queryFn: () => fetchReceivedRequests(userId),
+    enabled: !!userId,
+  });
+}
+
+export function usePendingReceivedCount(userId) {
+  return useQuery({
+    queryKey: ["pendingReceivedCount", userId],
+    queryFn: () => fetchPendingReceivedCount(userId),
+    enabled: !!userId,
+  });
+}
+
+export function useAcceptRequest(userId) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (requestId) => acceptAdoptionRequest(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["receivedRequests", userId] });
+      queryClient.invalidateQueries({ queryKey: ["pendingReceivedCount", userId] });
+    },
+  });
+}
+
+export function useDeclineRequest(userId) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (requestId) => declineAdoptionRequest(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["receivedRequests", userId] });
+      queryClient.invalidateQueries({ queryKey: ["pendingReceivedCount", userId] });
     },
   });
 }
