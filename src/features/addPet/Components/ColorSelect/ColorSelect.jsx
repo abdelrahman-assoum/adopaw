@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import { FlatList, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
 import { animalsColors } from "@/src/shared/constants/prefs";
@@ -24,9 +26,9 @@ export default function ColorSelect({ value = [], onChange }) {
           borderColor: "rgba(169,169,169,0.5)",
         },
         modalContent: {
-          borderRadius: 8,
+          borderRadius: 12,
           padding: 16,
-          maxHeight: "80%",
+          maxHeight: SCREEN_HEIGHT * 0.6,
           backgroundColor: colors.background,
         },
       }),

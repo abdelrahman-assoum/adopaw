@@ -1,11 +1,16 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useCurrentUser } from "@/src/features/chats/hooks/useCurrentUser";
+import { getUnreadCount } from "@/src/features/chats/services/chatService";
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
+import { supabase } from "@/src/shared/services/supabase/client";
+import { TABLES } from "@/src/shared/constants/tables";
 
 const ORDER = ["home", "map", "chats", "profile"];
 
@@ -29,6 +34,48 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslationLoader("home");
+  const userId = useCurrentUser();
+
+  const [unreadCount, setUnreadCount] = useState(0);
+  const channelRef = useRef(null);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    let isMounted = true;
+
+    const fetchCount = async () => {
+      try {
+        const count = await getUnreadCount(userId);
+        if (isMounted) setUnreadCount(count);
+      } catch {}
+    };
+
+    fetchCount();
+
+    // Re-fetch when any message is inserted or updated (is_read changes)
+    const channel = supabase
+      .channel(`unread-badge:${userId}`)
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: TABLES.MESSAGES,
+      }, fetchCount)
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: TABLES.MESSAGES,
+      }, fetchCount)
+      .subscribe();
+
+    channelRef.current = channel;
+
+    return () => {
+      isMounted = false;
+      supabase.removeChannel(channel);
+      channelRef.current = null;
+    };
+  }, [userId]);
 
   const routes = ORDER.map((n) => state.routes.find((r) => r.name === n)).filter(Boolean);
   const left  = routes.slice(0, 2);
@@ -40,6 +87,9 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
   const renderTab = (route) => {
     const focused = isFocused(route);
     const label = t(`tabs.${route.name}`) ?? route.name;
+    const isChats = route.name === "chats";
+    const showBadge = isChats && unreadCount > 0;
+
     return (
       <TouchableOpacity
         key={route.key}
@@ -47,12 +97,22 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
         activeOpacity={0.85}
         onPress={() => navigation.navigate(route.name)}
       >
-        <Ionicons
-          name={iconFor(route.name, focused)}
-          size={ICON_SIZE}
-          color={focused ? theme.colors.primary : theme.colors.palette.neutral[400]}
-        />
+        <View style={styles.iconWrap}>
+          <Ionicons
+            name={iconFor(route.name, focused)}
+            size={ICON_SIZE}
+            color={focused ? theme.colors.primary : theme.colors.palette.neutral[400]}
+          />
+          {showBadge && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {unreadCount > 99 ? "99+" : String(unreadCount)}
+              </Text>
+            </View>
+          )}
+        </View>
         <Text
+          numberOfLines={1}
           style={{
             fontFamily: theme.fonts.labelMedium.fontFamily,
             fontSize: theme.fonts.labelMedium.fontSize,
@@ -72,7 +132,7 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
     <View
       style={[
         styles.container,
-        { paddingBottom: insets.bottom - 12, backgroundColor: theme.colors.surface },
+        { paddingBottom: Math.max(insets.bottom - 12, 0), backgroundColor: theme.colors.surface },
       ]}
     >
       <View style={styles.bar}>
@@ -126,8 +186,27 @@ const styles = StyleSheet.create({
     }),
   },
   fabOverlay: { position: "absolute", left: 0, right: 0, alignItems: "center" },
-  side: { flexDirection: "row", alignItems: "center" },
-  tab: { width: 76, alignItems: "center", justifyContent: "center" },
+  side: { flexDirection: "row", alignItems: "center", flex: 1 },
+  tab: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 4 },
+  iconWrap: { position: "relative" },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -8,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: "#4083BB",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontFamily: "Alexandria_700Bold",
+    lineHeight: 13,
+  },
   fab: {
     width: FAB_SIZE,
     height: FAB_SIZE,

@@ -50,7 +50,8 @@
     "cancelConfirmTitle": "Cancel Request?",
     "cancelConfirmMessage": "Are you sure you want to cancel this adoption request?",
     "declineConfirmTitle": "Decline Request?",
-    "declineConfirmMessage": "Are you sure you want to decline this adoption request?"
+    "declineConfirmMessage": "Are you sure you want to decline this adoption request?",
+    "chatError": "Could not open chat. Try again."
   },
   "appearance": {
     "title": "App Appearance",

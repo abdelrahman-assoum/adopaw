@@ -1,0 +1,9 @@
+{
+  "chatTitle": "Chat",
+  "pawloTitle": "Pawlo AI",
+  "backToChats": "Chats",
+  "today": "Today",
+  "typing": "typing...",
+  "placeholder": "Type a message…",
+  "sendError": "Failed to send. Try again."
+}

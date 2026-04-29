@@ -1,0 +1,15 @@
+{
+  "title": "Hi, I'm Pawlo!",
+  "description": "Your AI pet adoption assistant. Ask me anything about finding, caring for, or adopting a pet.",
+  "suggestionTitle": "Try asking me:",
+  "typing": "Pawlo is thinking...",
+  "fallbackReply": "I'm here to help!",
+  "sendError": "Sorry, I couldn't reply. Try again.",
+  "suggestions": [
+    { "label": "What pet suits me?", "type": "blue" },
+    { "label": "How to adopt a dog?", "type": "coral" },
+    { "label": "Cat care tips", "type": "blue" },
+    { "label": "Best pets for kids", "type": "coral" },
+    { "label": "Pet food advice", "type": "blue" }
+  ]
+}

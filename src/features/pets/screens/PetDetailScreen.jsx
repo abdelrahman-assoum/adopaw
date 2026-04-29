@@ -30,6 +30,7 @@ import { usePet } from "@/src/features/home/hooks/usePets";
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
 import { supabase } from "@/src/shared/services/supabase/client";
 import { deleteImage } from "@/src/shared/services/supabase/upload";
+import { getOrCreateChat } from "@/src/features/chats/services/chatService";
 import AppButton from "@/src/shared/components/ui/AppButton/AppButton";
 import LoadingModal from "@/src/shared/components/ui/LoadingModal/LoadingModal";
 
@@ -132,6 +133,19 @@ export default function PetDetailScreen() {
         },
       },
     ]);
+  };
+
+  const handleOpenChat = async () => {
+    if (!userId || !pet?.posted_by) return;
+    try {
+      const chatId = await getOrCreateChat(userId, pet.posted_by, petId);
+      router.push({
+        pathname: "/(tabs)/chats/[chatId]",
+        params: { chatId, title: poster?.name ?? t("chatWithOwner") },
+      });
+    } catch {
+      Alert.alert(t("error"), t("chatError"));
+    }
   };
 
   const renderCTA = () => {
@@ -305,6 +319,7 @@ export default function PetDetailScreen() {
             name={poster.name ?? "Unknown"}
             avatarUrl={poster.avatar_url}
             postedAt={formatTimeAgo(pet.created_at, t)}
+            onMessage={!isOwner ? handleOpenChat : undefined}
           />
         )}
 

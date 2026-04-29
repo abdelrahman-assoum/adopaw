@@ -65,5 +65,7 @@
   "noLongerAvailable": "لم يعد متاحاً",
   "alreadyAdopted": "تم تبنيه بالفعل",
   "requestSentSuccess": "تم إرسال طلب التبني بنجاح!",
-  "requestError": "فشل إرسال الطلب. يرجى المحاولة مجدداً."
+  "requestError": "فشل إرسال الطلب. يرجى المحاولة مجدداً.",
+  "chatWithOwner": "التحدث مع المالك",
+  "chatError": "تعذّر فتح المحادثة. حاول مجدداً."
 }

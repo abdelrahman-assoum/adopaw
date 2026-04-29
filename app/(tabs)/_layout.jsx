@@ -20,8 +20,15 @@ export default function TabsLayout() {
       screenOptions={{ headerShown: false, tabBarStyle: { display: "none" } }}
       tabBar={(props) => {
         const activeRoute = props.state.routes[props.state.index];
-        const nestedIndex = activeRoute?.state?.index ?? 0;
-        const isDeep = nestedIndex > 0 || activeRoute?.name === "addPet";
+        const nestedState = activeRoute?.state;
+        const nestedIndex = nestedState?.index ?? 0;
+        // Also hide when navigating directly into a non-index screen (stack depth is 1
+        // but the single route is not the tab root, e.g. cross-tab push to [chatId])
+        const currentScreenName = nestedState?.routes?.[nestedIndex]?.name ?? "index";
+        const isDeep =
+          nestedIndex > 0 ||
+          currentScreenName !== "index" ||
+          activeRoute?.name === "addPet";
         return isDeep ? null : <CustomTabBar {...props} />;
       }}
     >

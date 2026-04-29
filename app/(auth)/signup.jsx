@@ -1,7 +1,13 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import SignupForm from "@/src/features/auth/components/SignupForm";
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
@@ -19,6 +25,7 @@ export default function Signup() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslationLoader("auth");
+  const insets = useSafeAreaInsets();
 
   const [loading, setLoading] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
@@ -102,37 +109,53 @@ export default function Signup() {
 
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.surface }]}>
+    <KeyboardAvoidingView
+      style={[styles.keyboardView, { backgroundColor: colors.surface }]}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <LoadingModal loading={loading} />
 
-      <Heading
-        title={t("signup.title")}
-        description={t("signup.description")}
-        align="start"
-      />
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          {
+            paddingTop: insets.top + 40,
+            paddingBottom: Math.max(insets.bottom + 24, 40),
+          },
+        ]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Heading
+          title={t("signup.title")}
+          description={t("signup.description")}
+          align="start"
+        />
 
-      <InfoCard
-        visible={infoVisible}
-        message={infoMessage}
-        type={infoType}
-        onDismiss={() => setInfoVisible(false)}
-      />
+        <InfoCard
+          visible={infoVisible}
+          message={infoMessage}
+          type={infoType}
+          onDismiss={() => setInfoVisible(false)}
+        />
 
-      <SignupForm
-        onSignup={handleSignup}
-        onGoogleSignup={handleSignupWithGoogle}
-        loading={loading}
-        onNavigateToLogin={() => router.back()}
-      />
-    </View>
+        <SignupForm
+          onSignup={handleSignup}
+          onGoogleSignup={handleSignupWithGoogle}
+          loading={loading}
+          onNavigateToLogin={() => router.back()}
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  keyboardView: {
     flex: 1,
-    paddingTop: 100,
+  },
+  container: {
+    flexGrow: 1,
     paddingHorizontal: 28,
-    paddingBottom: 60,
   },
 });

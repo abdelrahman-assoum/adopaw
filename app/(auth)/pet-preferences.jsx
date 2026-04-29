@@ -1,8 +1,18 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const H_PAD = 28 * 2;
+const AVAILABLE_WIDTH = SCREEN_WIDTH - H_PAD;
+const SPECIES_COLS = 3;
+const speciesCardWidth = Math.floor(
+  (AVAILABLE_WIDTH - 8 * (SPECIES_COLS - 1)) / SPECIES_COLS,
+);
+const COLOR_COLS = 4;
+const colorItemWidth = Math.floor((AVAILABLE_WIDTH - 8 * (COLOR_COLS - 1)) / COLOR_COLS);
 
 import { formatAgeRange } from "../../src/features/auth/utils/age-range";
 import { updatePetPreferences } from "../../src/features/auth/services/profileServices";
@@ -78,79 +88,83 @@ export default function PetPreferencesScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.surface }]}>
+    <ScrollView
+      style={[styles.scrollView, { backgroundColor: colors.surface }]}
+      contentContainerStyle={[
+        styles.container,
+        {
+          paddingTop: insets.top + 40,
+          paddingBottom: Math.max(insets.bottom + 24, 40),
+        },
+      ]}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
       <Heading
         title={t("petPref.title")}
         description={t("petPref.description")}
         align="start"
       />
       <LoadingModal loading={loading} />
-      <InputLabel text={t("petPref.labels.specie")} />
-      <View
-        style={{
-          width: "100%",
-          rowGap: 8,
-          columnGap: 8,
-          flexWrap: "wrap",
-          flexDirection: "row",
-        }}
-      >
-        {animalOptions.map((option) => (
-          <SelectOption
-            key={option.value}
-            label={t(option.labelKey, { ns: "common" })}
-            image={option.image}
-            selected={selectedSpecies.includes(option.value)}
-            onPress={() => toggleSpeciesSelection(option.value)}
-          />
-        ))}
+
+      <View style={styles.section}>
+        <InputLabel text={t("petPref.labels.specie")} />
+        <View style={styles.speciesGrid}>
+          {animalOptions.map((option) => (
+            <SelectOption
+              key={option.value}
+              label={t(option.labelKey, { ns: "common" })}
+              image={option.image}
+              selected={selectedSpecies.includes(option.value)}
+              onPress={() => toggleSpeciesSelection(option.value)}
+              style={{ width: speciesCardWidth }}
+            />
+          ))}
+        </View>
       </View>
-      <InputLabel text={t("petPref.labels.gender")} />
-      <View
-        style={{
-          flexDirection: "row",
-          width: "100%",
-          justifyContent: "space-between",
-        }}
-      >
-        {gender.map((option) => (
-          <SelectOption
-            key={option.value}
-            label={t(`gender.${option.value}`, { ns: "common" })}
-            icon={option.iconName}
-            iconColor={option.iconColor}
-            selected={selectedGenders.includes(option.value)}
-            onPress={() => toggleGenderSelection(option.value)}
-            style={{ width: 180 }}
-          />
-        ))}
+
+      <View style={styles.section}>
+        <InputLabel text={t("petPref.labels.gender")} />
+        <View style={styles.genderRow}>
+          {gender.map((option) => (
+            <SelectOption
+              key={option.value}
+              label={t(`gender.${option.value}`, { ns: "common" })}
+              icon={option.iconName}
+              iconColor={option.iconColor}
+              selected={selectedGenders.includes(option.value)}
+              onPress={() => toggleGenderSelection(option.value)}
+              style={styles.genderOption}
+            />
+          ))}
+        </View>
       </View>
-      <InputLabel text={t("petPref.labels.color")} />
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          gap: 8,
-        }}
-      >
-        {animalsColors.map((option) => (
-          <ColorSelectOption
-            key={option.value}
-            label={t(`colors.${option.label}`, { ns: "common" })}
-            color={option.value}
-            onPress={() => toggleColorsSelection(option.value)}
-            selected={selectedColors.includes(option.value)}
-            style={{ width: "20%" }}
-          />
-        ))}
+
+      <View style={styles.section}>
+        <InputLabel text={t("petPref.labels.color")} />
+        <View style={styles.colorGrid}>
+          {animalsColors.map((option) => (
+            <ColorSelectOption
+              key={option.value}
+              label={t(`colors.${option.label}`, { ns: "common" })}
+              color={option.value}
+              onPress={() => toggleColorsSelection(option.value)}
+              selected={selectedColors.includes(option.value)}
+              style={{ width: colorItemWidth }}
+            />
+          ))}
+        </View>
       </View>
-      <InputLabel text={t("petPref.labels.age")} />
-      <AgeSlider
-        valueMin={selectedAge[0]}
-        valueMax={selectedAge[1]}
-        onRangeChange={(min, max) => setSelectedAge([min, max])}
-      />
+
+      <View style={styles.section}>
+        <InputLabel text={t("petPref.labels.age")} />
+        <AgeSlider
+          valueMin={selectedAge[0]}
+          valueMax={selectedAge[1]}
+          onRangeChange={(min, max) => setSelectedAge([min, max])}
+        />
+      </View>
+
       <View style={styles.buttonsContainer}>
         <AppButton
           variant="secondary"
@@ -170,18 +184,38 @@ export default function PetPreferencesScreen() {
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   container: {
-    paddingVertical: 60,
+    flexGrow: 1,
     paddingHorizontal: 28,
-    paddingTop: 100,
-    height: "100%",
+    rowGap: 16,
+  },
+  section: {
+    rowGap: 8,
+  },
+  speciesGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  genderRow: {
+    flexDirection: "row",
     gap: 12,
+  },
+  genderOption: {
+    flex: 1,
+  },
+  colorGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
   },
   buttonsContainer: {
     flexDirection: "row",
-    justifyContent: "flex-start",
     alignItems: "center",
-    gap: 20,
-    marginVertical: 24,
+    gap: 16,
+    marginTop: 8,
   },
 });

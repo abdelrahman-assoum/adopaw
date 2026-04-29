@@ -50,7 +50,8 @@
     "cancelConfirmTitle": "إلغاء الطلب؟",
     "cancelConfirmMessage": "هل أنت متأكد أنك تريد إلغاء طلب التبني هذا؟",
     "declineConfirmTitle": "رفض الطلب؟",
-    "declineConfirmMessage": "هل أنت متأكد أنك تريد رفض طلب التبني هذا؟"
+    "declineConfirmMessage": "هل أنت متأكد أنك تريد رفض طلب التبني هذا؟",
+    "chatError": "تعذّر فتح المحادثة. حاول مجدداً."
   },
   "appearance": {
     "title": "مظهر التطبيق",

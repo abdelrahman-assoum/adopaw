@@ -7,6 +7,9 @@ const translationRegistry = {
     petdetails: require("../locale/en/petdetails.json"),
     addPet: require("../locale/en/addPet.json"),
     profile: require("../locale/en/profile.json"),
+    chatlist: require("../locale/en/chatlist.json"),
+    chatId: require("../locale/en/chatId.json"),
+    pawlo: require("../locale/en/pawlo.json"),
   },
   ar: {
     onboarding: require("../locale/ar/onboarding.json"),
@@ -16,6 +19,9 @@ const translationRegistry = {
     petdetails: require("../locale/ar/petdetails.json"),
     addPet: require("../locale/ar/addPet.json"),
     profile: require("../locale/ar/profile.json"),
+    chatlist: require("../locale/ar/chatlist.json"),
+    chatId: require("../locale/ar/chatId.json"),
+    pawlo: require("../locale/ar/pawlo.json"),
   },
 };
 

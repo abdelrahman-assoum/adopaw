@@ -1,6 +1,7 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { getOrCreateChat } from "@/src/features/chats/services/chatService";
 import {
   ActivityIndicator,
   Alert,
@@ -28,7 +29,27 @@ import { supabase } from "@/src/shared/services/supabase/client";
 
 function RequestCard({ request, tab, userId }) {
   const theme = useTheme();
+  const router = useRouter();
   const { t } = useTranslationLoader("profile");
+
+  const handleOpenChat = async () => {
+    const otherUserId = tab === "sent"
+      ? request.pet?.owner?.id
+      : request.requester?.id;
+    const otherName = tab === "sent"
+      ? request.pet?.owner?.name
+      : request.requester?.name;
+    if (!userId || !otherUserId) return;
+    try {
+      const chatId = await getOrCreateChat(userId, otherUserId, request.pet?.id ?? null);
+      router.push({
+        pathname: "/(tabs)/chats/[chatId]",
+        params: { chatId, title: otherName ?? "Chat" },
+      });
+    } catch (err) {
+      Alert.alert(t("common.error"), t("requests.chatError"));
+    }
+  };
 
   const { mutate: cancelRequest, isPending: cancelling } = useCancelAdoptionRequest(
     request.pet?.id,
@@ -130,16 +151,26 @@ function RequestCard({ request, tab, userId }) {
               <Text style={[styles.actionLabel, { color: "#AF2E2E" }]}>{t("requests.cancel")}</Text>
             </TouchableOpacity>
           ) : (
-            <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
-              <Ionicons name={statusStyle.icon} size={13} color={statusStyle.text} />
-              <Text style={[styles.statusText, { color: statusStyle.text }]}>
-                {t(`requests.${request.status}`)}
-              </Text>
-            </View>
+            <>
+              <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
+                <Ionicons name={statusStyle.icon} size={13} color={statusStyle.text} />
+                <Text style={[styles.statusText, { color: statusStyle.text }]}>
+                  {t(`requests.${request.status}`)}
+                </Text>
+              </View>
+              {request.status === "accepted" && (
+                <TouchableOpacity style={styles.actionBtn} onPress={handleOpenChat}>
+                  <View style={[styles.actionCircle, { backgroundColor: "#DBEBF9" }]}>
+                    <Ionicons name="chatbubble-ellipses-outline" size={15} color="#4083BB" />
+                  </View>
+                  <Text style={[styles.actionLabel, { color: "#4083BB" }]}>{t("requests.chat")}</Text>
+                </TouchableOpacity>
+              )}
+            </>
           )
         ) : (
           <>
-            <TouchableOpacity style={styles.actionBtn} onPress={() => {}}>
+            <TouchableOpacity style={styles.actionBtn} onPress={handleOpenChat}>
               <View style={[styles.actionCircle, { backgroundColor: "#DBEBF9" }]}>
                 <Ionicons name="chatbubble-ellipses-outline" size={15} color="#4083BB" />
               </View>

@@ -1,8 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Avatar, useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import LocationInput from "../../src/features/auth/components/LocationInput/LocationInput";
 import { createProfile } from "../../src/features/auth/services/profileServices";
@@ -21,6 +29,7 @@ export default function ProfileCompleteScreen() {
   const { colors } = useTheme();
   const router = useRouter();
   const { t } = useTranslationLoader(["auth"]);
+  const insets = useSafeAreaInsets();
 
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -89,79 +98,97 @@ export default function ProfileCompleteScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.surface }]}>
+    <KeyboardAvoidingView
+      style={[styles.keyboardView, { backgroundColor: colors.surface }]}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <LoadingModal loading={loading} />
-      <Heading
-        title={t("profile-c.title")}
-        description={t("profile-c.description")}
-        align="start"
-      />
-      <View style={styles.avatarContainer}>
-        <Avatar.Image
-          size={150}
-          source={
-            image
-              ? { uri: image }
-              : require("../../src/assets/images/avatar-placeholder.png")
-          }
-          style={styles.avatar}
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          {
+            paddingTop: insets.top + 40,
+            paddingBottom: Math.max(insets.bottom + 24, 40),
+          },
+        ]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Heading
+          title={t("profile-c.title")}
+          description={t("profile-c.description")}
+          align="start"
         />
-        <AppButton
-          variant="secondary"
-          text={t("profile-c.uploadButton")}
-          onPress={handleImagePick}
-        />
-      </View>
-      <View>
-        <InputLabel text={t("profile-c.name.label")} />
-        <AppInput
-          placeholder={t("profile-c.name.placeholder")}
-          value={name}
-          onChangeText={(text) => {
-            setName(text);
-            setErrors((p) => ({ ...p, name: "" }));
-          }}
-          onBlur={handleNameBlur}
-          error={!!errors.name}
-          errorMessage={errors.name}
-        />
-      </View>
-      <View>
-        <InputLabel text={t("profile-c.location.label")} />
-        <LocationInput
-          onLocationRetrieved={({ geoJson }) => {
-            setLocation(geoJson);
-            setErrors((p) => ({ ...p, location: "" }));
-          }}
-          error={!!errors.location}
-          errorMessage={errors.location}
-        />
-      </View>
-      <View style={{ marginBottom: 20 }}>
+        <View style={styles.avatarContainer}>
+          <Avatar.Image
+            size={120}
+            source={
+              image
+                ? { uri: image }
+                : require("../../src/assets/images/avatar-placeholder.png")
+            }
+            style={styles.avatar}
+          />
+          <AppButton
+            variant="secondary"
+            text={t("profile-c.uploadButton")}
+            onPress={handleImagePick}
+          />
+        </View>
+        <View style={styles.section}>
+          <InputLabel text={t("profile-c.name.label")} />
+          <AppInput
+            placeholder={t("profile-c.name.placeholder")}
+            value={name}
+            onChangeText={(text) => {
+              setName(text);
+              setErrors((p) => ({ ...p, name: "" }));
+            }}
+            onBlur={handleNameBlur}
+            error={!!errors.name}
+            errorMessage={errors.name}
+          />
+        </View>
+        <View style={styles.section}>
+          <InputLabel text={t("profile-c.location.label")} />
+          <LocationInput
+            onLocationRetrieved={({ geoJson }) => {
+              setLocation(geoJson);
+              setErrors((p) => ({ ...p, location: "" }));
+            }}
+            error={!!errors.location}
+            errorMessage={errors.location}
+          />
+        </View>
         <AppButton
           text={t("profile-c.submit")}
           onPress={handleSubmit}
           loading={loading}
           style={styles.submitButton}
         />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardView: {
+    flex: 1,
+  },
   container: {
-    paddingVertical: 60,
+    flexGrow: 1,
     paddingHorizontal: 28,
-    paddingTop: 100,
-    height: "100%",
-    gap: 12,
+    rowGap: 16,
   },
   avatar: { marginBottom: 12 },
   avatarContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginVertical: 32,
+    paddingVertical: 16,
+    rowGap: 12,
   },
-  submitButton: { width: "100%", marginTop: 16 },
+  section: {
+    rowGap: 4,
+  },
+  submitButton: { width: "100%", marginTop: 8 },
 });

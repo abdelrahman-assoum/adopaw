@@ -16,7 +16,7 @@ export default function SelectOption({
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity onPress={onPress} style={{ marginVertical: 4 }}>
+    <TouchableOpacity onPress={onPress} style={[styles.touchable, style]}>
       <Surface
         elevation={0}
         style={[
@@ -30,7 +30,6 @@ export default function SelectOption({
               ? (colors?.palette?.blue?.[500] ?? "#007BFF")
               : (colors?.palette?.neutral?.[300] ?? "#CCCCCC"),
           },
-          style,
         ]}
       >
         <View style={styles.contentRow}>
@@ -65,13 +64,16 @@ export default function SelectOption({
 }
 
 const styles = StyleSheet.create({
+  touchable: {
+    marginVertical: 4,
+  },
   optionContainer: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    padding: 12,
     borderRadius: 16,
-    width: 118,
   },
   label: {
     fontSize: 16,

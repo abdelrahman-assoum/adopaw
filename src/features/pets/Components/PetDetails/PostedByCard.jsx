@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
 
-export default function PostedByCard({ name, avatarUrl, postedAt, onMessage, onCall }) {
+export default function PostedByCard({ name, avatarUrl, postedAt, onMessage }) {
   const theme = useTheme();
   const { t } = useTranslationLoader("petdetails");
 
@@ -26,14 +26,15 @@ export default function PostedByCard({ name, avatarUrl, postedAt, onMessage, onC
         <Text variant="labelSmall" style={{ color: neutral600, marginTop: 2 }}>{postedAt}</Text>
       </View>
 
-      <View style={styles.actions}>
-        <View style={[styles.iconButton, { backgroundColor: blue200 }]}>
-          <Ionicons name="send" size={20} color={blue600} onPress={onMessage} />
-        </View>
-        <View style={[styles.iconButton, { backgroundColor: blue200 }]}>
-          <Ionicons name="call" size={20} color={blue600} onPress={onCall} />
-        </View>
-      </View>
+      {onMessage && (
+        <TouchableOpacity
+          style={[styles.iconButton, { backgroundColor: blue200 }]}
+          onPress={onMessage}
+          activeOpacity={0.75}
+        >
+          <Ionicons name="send" size={20} color={blue600} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

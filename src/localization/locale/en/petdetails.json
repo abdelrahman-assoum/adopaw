@@ -65,5 +65,7 @@
   "noLongerAvailable": "No Longer Available",
   "alreadyAdopted": "Already Adopted",
   "requestSentSuccess": "Your adoption request has been sent!",
-  "requestError": "Failed to send request. Please try again."
+  "requestError": "Failed to send request. Please try again.",
+  "chatWithOwner": "Chat with Owner",
+  "chatError": "Could not open chat. Try again."
 }

@@ -238,7 +238,7 @@ export default function PetForm({ initialData = null, onSubmit, isEditing = fals
       {/* Gender */}
       <View>
         <InputLabel text={t("inputs.gender.label")} />
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", gap: 12 }}>
           {gender.map((option) => (
             <SelectOption
               key={option.value}
@@ -247,7 +247,7 @@ export default function PetForm({ initialData = null, onSubmit, isEditing = fals
               iconColor={option.iconColor}
               selected={selectedGender === option.value}
               onPress={() => setGender(option.value)}
-              style={{ width: 180 }}
+              style={{ flex: 1 }}
             />
           ))}
         </View>
