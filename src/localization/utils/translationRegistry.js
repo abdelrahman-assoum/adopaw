@@ -10,6 +10,7 @@ const translationRegistry = {
     chatlist: require("../locale/en/chatlist.json"),
     chatId: require("../locale/en/chatId.json"),
     pawlo: require("../locale/en/pawlo.json"),
+    map: require("../locale/en/map.json"),
   },
   ar: {
     onboarding: require("../locale/ar/onboarding.json"),
@@ -22,6 +23,7 @@ const translationRegistry = {
     chatlist: require("../locale/ar/chatlist.json"),
     chatId: require("../locale/ar/chatId.json"),
     pawlo: require("../locale/ar/pawlo.json"),
+    map: require("../locale/ar/map.json"),
   },
 };
 

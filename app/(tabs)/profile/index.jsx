@@ -37,8 +37,12 @@ export default function Profile() {
       t("logoutConfirmation.message"),
       [
         { text: t("common.cancel"), style: "cancel" },
-        { text: t("common.confirm"), onPress: handleLogout, style: "destructive" },
-      ]
+        {
+          text: t("common.confirm"),
+          onPress: handleLogout,
+          style: "destructive",
+        },
+      ],
     );
   };
 
@@ -51,13 +55,16 @@ export default function Profile() {
     }
   };
 
+  const tabBarOffset = 96 + Math.max(insets.bottom - 12, 0);
+
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={[
         styles.content,
-        { paddingTop: insets.top + 28, paddingBottom: insets.bottom + 16 },
+        { paddingTop: insets.top + 28, paddingBottom: tabBarOffset + 16 },
       ]}
+      showsVerticalScrollIndicator={false}
     >
       {profile && (
         <View style={styles.profileContainer}>
@@ -76,8 +83,17 @@ export default function Profile() {
 
             {userEmail ? (
               <View style={styles.metaRow}>
-                <Ionicons name="mail-outline" size={14} color={colors.palette.neutral[400]} />
-                <Text style={[styles.metaText, { color: colors.palette.neutral[500] }]}>
+                <Ionicons
+                  name="mail-outline"
+                  size={14}
+                  color={colors.palette.neutral[400]}
+                />
+                <Text
+                  style={[
+                    styles.metaText,
+                    { color: colors.palette.neutral[500] },
+                  ]}
+                >
                   {userEmail}
                 </Text>
               </View>
@@ -85,8 +101,17 @@ export default function Profile() {
 
             {profile.address ? (
               <View style={styles.metaRow}>
-                <Ionicons name="location-outline" size={14} color={colors.palette.neutral[400]} />
-                <Text style={[styles.metaText, { color: colors.palette.neutral[500] }]}>
+                <Ionicons
+                  name="location-outline"
+                  size={14}
+                  color={colors.palette.neutral[400]}
+                />
+                <Text
+                  style={[
+                    styles.metaText,
+                    { color: colors.palette.neutral[500] },
+                  ]}
+                >
                   {profile.address}
                 </Text>
               </View>
@@ -119,6 +144,7 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: "100%",
   },
   content: {

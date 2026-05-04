@@ -12,7 +12,7 @@ module.exports = ({ config }) => {
       config: {
         googleMaps: { apiKey: googleMapsKey || "" },
       },
-      softwareKeyboardLayoutMode: "pan",
+      softwareKeyboardLayoutMode: "resize",
     },
     ios: {
       config: {

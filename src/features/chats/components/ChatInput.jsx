@@ -87,7 +87,7 @@ export default function ChatInput({ onSend, onTyping }) {
   };
 
   return (
-    <View style={[styles.bar, { backgroundColor: theme.colors.surface, paddingBottom: Math.max(insets.bottom, 12) }]}>
+    <View style={[styles.bar, { backgroundColor: theme.colors.surface, paddingBottom: Math.max(insets.bottom, 20) }]}>
       <View style={[styles.pill, { backgroundColor: inputBg }]}>
         <TextInput
           value={message}

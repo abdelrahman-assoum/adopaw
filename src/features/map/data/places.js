@@ -1,0 +1,91 @@
+export const CATEGORY_CONFIG = {
+  veterinary: { emoji: "🏥", color: "#3A2A91", label: "Veterinary" },
+  petStore:   { emoji: "🏪", color: "#E9661F", label: "Pet Stores" },
+  shelter:    { emoji: "🏠", color: "#36BA7A", label: "Shelters" },
+  park:       { emoji: "🌳", color: "#4D9DE0", label: "Parks" },
+};
+
+export const CATEGORIES = ["veterinary", "petStore", "shelter", "park"];
+
+export const places = [
+  {
+    id: "1",
+    name: "Happy Paws Shelter",
+    description: "Home for many adoptable cats & dogs",
+    latitude: 33.8944, longitude: 35.5018,
+    category: "shelter",
+    rating: 4.7, reviewCount: 89, isOpen: true,
+  },
+  {
+    id: "2",
+    name: "Safe Haven Rescue",
+    description: "Non-profit rescue for all animals",
+    latitude: 33.882, longitude: 35.512,
+    category: "shelter",
+    rating: 4.5, reviewCount: 62, isOpen: false,
+  },
+  {
+    id: "3",
+    name: "Downtown Vet Clinic",
+    description: "24/7 veterinary services",
+    latitude: 33.8898, longitude: 35.5055,
+    category: "veterinary",
+    rating: 4.8, reviewCount: 210, isOpen: true,
+  },
+  {
+    id: "4",
+    name: "Petcare",
+    description: "Veterinary for all pets",
+    latitude: 33.8985, longitude: 35.496,
+    category: "veterinary",
+    rating: 4.5, reviewCount: 120, isOpen: false,
+  },
+  {
+    id: "5",
+    name: "Animal Medical Center",
+    description: "Specialists in exotic pets",
+    latitude: 33.886, longitude: 35.518,
+    category: "veterinary",
+    rating: 4.2, reviewCount: 78, isOpen: true,
+  },
+  {
+    id: "6",
+    name: "Bisbis Man",
+    description: "Pet foods, toys and accessories",
+    latitude: 33.8971, longitude: 35.4972,
+    category: "petStore",
+    rating: 4.5, reviewCount: 120, isOpen: true,
+  },
+  {
+    id: "7",
+    name: "Fur & Paws",
+    description: "Premium pet supplies & grooming",
+    latitude: 33.901, longitude: 35.509,
+    category: "petStore",
+    rating: 4.6, reviewCount: 95, isOpen: true,
+  },
+  {
+    id: "8",
+    name: "PetWorld",
+    description: "Everything your pet needs",
+    latitude: 33.883, longitude: 35.498,
+    category: "petStore",
+    rating: 4.3, reviewCount: 140, isOpen: false,
+  },
+  {
+    id: "9",
+    name: "Horsh Beirut Park",
+    description: "Dog-friendly green space in the city",
+    latitude: 33.876, longitude: 35.502,
+    category: "park",
+    rating: 4.9, reviewCount: 320, isOpen: true,
+  },
+  {
+    id: "10",
+    name: "Pine Forest Park",
+    description: "Off-leash area for dogs",
+    latitude: 33.905, longitude: 35.489,
+    category: "park",
+    rating: 4.7, reviewCount: 180, isOpen: true,
+  },
+];

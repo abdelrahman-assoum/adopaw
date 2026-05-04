@@ -1,0 +1,18 @@
+{
+  "search": {
+    "placeholder": "Search for location"
+  },
+  "categories": {
+    "veterinary": "Veterinary",
+    "petStore": "Pet Stores",
+    "shelter": "Shelters",
+    "park": "Parks"
+  },
+  "nearestPlaces": "Nearest Places",
+  "placesFound": "{{count}} places found",
+  "openNow": "Open Now",
+  "closed": "Closed",
+  "reviews": "{{count}} reviews",
+  "directions": "Directions",
+  "share": "Share"
+}

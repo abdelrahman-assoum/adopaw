@@ -1,0 +1,18 @@
+{
+  "search": {
+    "placeholder": "ابحث عن موقع"
+  },
+  "categories": {
+    "veterinary": "بيطري",
+    "petStore": "متاجر الحيوانات",
+    "shelter": "الملاجئ",
+    "park": "الحدائق"
+  },
+  "nearestPlaces": "أقرب الأماكن",
+  "placesFound": "{{count}} مكان",
+  "openNow": "مفتوح الآن",
+  "closed": "مغلق",
+  "reviews": "{{count}} تقييم",
+  "directions": "الاتجاهات",
+  "share": "مشاركة"
+}

@@ -9,8 +9,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCurrentUser } from "@/src/features/chats/hooks/useCurrentUser";
 import { getUnreadCount } from "@/src/features/chats/services/chatService";
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
-import { supabase } from "@/src/shared/services/supabase/client";
 import { TABLES } from "@/src/shared/constants/tables";
+import { supabase } from "@/src/shared/services/supabase/client";
 
 const ORDER = ["home", "map", "chats", "profile"];
 
@@ -21,11 +21,16 @@ const SPACER = FAB_SIZE + 9;
 
 function iconFor(name, focused) {
   switch (name) {
-    case "home":    return focused ? "home"                  : "home-outline";
-    case "map":     return focused ? "location"              : "location-outline";
-    case "chats":   return focused ? "chatbubble-ellipses"   : "chatbubble-ellipses-outline";
-    case "profile": return focused ? "person"                : "person-outline";
-    default:        return "ellipse-outline";
+    case "home":
+      return focused ? "home" : "home-outline";
+    case "map":
+      return focused ? "location" : "location-outline";
+    case "chats":
+      return focused ? "chatbubble-ellipses" : "chatbubble-ellipses-outline";
+    case "profile":
+      return focused ? "person" : "person-outline";
+    default:
+      return "ellipse-outline";
   }
 }
 
@@ -56,16 +61,24 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
     // Re-fetch when any message is inserted or updated (is_read changes)
     const channel = supabase
       .channel(`unread-badge:${userId}`)
-      .on("postgres_changes", {
-        event: "INSERT",
-        schema: "public",
-        table: TABLES.MESSAGES,
-      }, fetchCount)
-      .on("postgres_changes", {
-        event: "UPDATE",
-        schema: "public",
-        table: TABLES.MESSAGES,
-      }, fetchCount)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: TABLES.MESSAGES,
+        },
+        fetchCount,
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: TABLES.MESSAGES,
+        },
+        fetchCount,
+      )
       .subscribe();
 
     channelRef.current = channel;
@@ -77,8 +90,10 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
     };
   }, [userId]);
 
-  const routes = ORDER.map((n) => state.routes.find((r) => r.name === n)).filter(Boolean);
-  const left  = routes.slice(0, 2);
+  const routes = ORDER.map((n) =>
+    state.routes.find((r) => r.name === n),
+  ).filter(Boolean);
+  const left = routes.slice(0, 2);
   const right = routes.slice(2);
 
   const isFocused = (route) =>
@@ -101,7 +116,9 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
           <Ionicons
             name={iconFor(route.name, focused)}
             size={ICON_SIZE}
-            color={focused ? theme.colors.primary : theme.colors.palette.neutral[400]}
+            color={
+              focused ? theme.colors.primary : theme.colors.palette.neutral[400]
+            }
           />
           {showBadge && (
             <View style={styles.badge}>
@@ -119,7 +136,9 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
             lineHeight: theme.fonts.labelMedium.lineHeight,
             fontWeight: "600",
             marginTop: 4,
-            color: focused ? theme.colors.primary : theme.colors.palette.neutral[400],
+            color: focused
+              ? theme.colors.primary
+              : theme.colors.palette.neutral[400],
           }}
         >
           {label}
@@ -132,7 +151,10 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
     <View
       style={[
         styles.container,
-        { paddingBottom: Math.max(insets.bottom - 12, 0), backgroundColor: theme.colors.surface },
+        {
+          paddingBottom: Math.max(insets.bottom, 0),
+          backgroundColor: theme.colors.surface,
+        },
       ]}
     >
       <View style={styles.bar}>
@@ -187,7 +209,12 @@ const styles = StyleSheet.create({
   },
   fabOverlay: { position: "absolute", left: 0, right: 0, alignItems: "center" },
   side: { flexDirection: "row", alignItems: "center", flex: 1 },
-  tab: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 4 },
+  tab: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 4,
+  },
   iconWrap: { position: "relative" },
   badge: {
     position: "absolute",
