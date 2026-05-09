@@ -1,12 +1,13 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { ActivityIndicator, Text, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ChatList from "@/src/features/chats/components/ChatList";
 import { useCurrentUser } from "@/src/features/chats/hooks/useCurrentUser";
 import {
+  deleteChat,
   getUserChats,
   subscribeToUserChats,
 } from "@/src/features/chats/services/chatService";
@@ -50,6 +51,32 @@ export default function ChatsScreen() {
   const handleOpenChat = (chatId, name) =>
     router.push({ pathname: "/(tabs)/chats/[chatId]", params: { chatId, title: name } });
 
+  const handleLongPressChat = useCallback(
+    (chatId, name) => {
+      Alert.alert(
+        t("deleteConfirmTitle"),
+        t("deleteConfirmMessage"),
+        [
+          { text: t("cancel"), style: "cancel" },
+          {
+            text: t("deleteChat"),
+            style: "destructive",
+            onPress: async () => {
+              setChats((prev) => prev.filter((c) => c._id !== chatId));
+              try {
+                await deleteChat(String(chatId));
+              } catch (err) {
+                console.error("Delete chat failed:", err);
+                fetchChats();
+              }
+            },
+          },
+        ]
+      );
+    },
+    [t, fetchChats]
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.heading, { paddingTop: insets.top + 16 }]}>
@@ -64,7 +91,7 @@ export default function ChatsScreen() {
       {initialLoading ? (
         <ActivityIndicator style={{ marginTop: 32 }} />
       ) : (
-        <ChatList chats={chats} onPressChat={handleOpenChat} />
+        <ChatList chats={chats} onPressChat={handleOpenChat} onLongPressChat={handleLongPressChat} />
       )}
     </View>
   );

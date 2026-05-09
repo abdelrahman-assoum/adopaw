@@ -20,12 +20,18 @@ export const profileMenuOptions = [
   },
   {
     id: "4",
+    titleKey: "petPreferences",
+    iconName: "heart-outline",
+    route: "/(tabs)/profile/user-pet-preferences",
+  },
+  {
+    id: "5",
     titleKey: "appearance",
     iconName: "color-palette-outline",
     route: "/(tabs)/profile/appearance",
   },
   {
-    id: "5",
+    id: "6",
     titleKey: "help",
     iconName: "help-circle-outline",
     route: "/(tabs)/profile/help",

@@ -78,6 +78,7 @@ export default function UserPetsScreen() {
           renderItem={({ item }) => (
             <PetCard
               pet={item}
+              status={item.status}
               onPress={() => router.push(`/(tabs)/profile/${item.id}`)}
             />
           )}

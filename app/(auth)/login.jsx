@@ -15,6 +15,7 @@ import Heading from "@/src/shared/components/ui/Heading/Heading";
 import InfoCard from "@/src/shared/components/ui/InfoCard/InfoCard";
 import LoadingModal from "@/src/shared/components/ui/LoadingModal/LoadingModal";
 import {
+  resendOtp,
   signInWithEmail,
   signInWithGoogle,
 } from "@/src/shared/services/supabase/auth";
@@ -66,6 +67,12 @@ export default function Login() {
       const { data, error } = await signInWithEmail(email, password);
 
       if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          // Account exists but not verified — resend OTP and send them to verify
+          await resendOtp(email);
+          router.push({ pathname: "/otp", params: { email } });
+          return;
+        }
         showError(error.message);
         return;
       }
@@ -139,6 +146,7 @@ export default function Login() {
           onGoogleLogin={handleLoginWithGoogle}
           loading={loading}
           onNavigateToSignup={() => router.push("/signup")}
+          onNavigateToForgotPassword={() => router.push("/forgot-password")}
         />
       </ScrollView>
     </KeyboardAvoidingView>

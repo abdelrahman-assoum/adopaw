@@ -109,6 +109,9 @@
     "roborovski": "Roborovski",
     "chineseHamster": "Chinese Hamster"
   },
+  "status": {
+    "adopted": "Adopted"
+  },
   "done": "Done",
   "location": {
     "label": "Location",

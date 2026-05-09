@@ -1,6 +1,7 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { List, Text } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
 import AiAssistantCard from "./AiAssistantCard";
@@ -9,10 +10,12 @@ import ChatCard from "./ChatCard";
 export default function ChatList({
   chats = [],
   onPressChat,
+  onLongPressChat,
   emptyTitle,
   emptySubtitle,
 }) {
   const { t } = useTranslationLoader("chatlist");
+  const { colors } = useTheme();
 
   const toPreview = useCallback(
     (chat) => {
@@ -34,12 +37,16 @@ export default function ChatList({
       timestamp={item.updatedAt ?? null}
       unreadCount={item.unreadCount ?? 0}
       onPress={() => onPressChat?.(item._id, item.name)}
+      onLongPress={() => onLongPressChat?.(item._id, item.name)}
     />
   );
 
   return (
     <FlatList
-      contentContainerStyle={styles.list}
+      contentContainerStyle={[
+        styles.list,
+        chats.length === 0 && styles.listEmpty,
+      ]}
       data={chats}
       keyExtractor={(item) => String(item._id)}
       renderItem={renderItem}
@@ -50,9 +57,21 @@ export default function ChatList({
       }
       ListEmptyComponent={
         <View style={styles.emptyWrap}>
-          <List.Icon icon="chat-outline" />
-          <Text variant="titleMedium">{emptyTitle ?? t("emptyTitle")}</Text>
-          <Text variant="bodyMedium" style={styles.emptySub}>
+          <Ionicons
+            name="chatbubbles-outline"
+            size={72}
+            color={colors.outline ?? "#9ca3af"}
+          />
+          <Text
+            variant="titleMedium"
+            style={[styles.emptyTitle, { color: colors.onSurface }]}
+          >
+            {emptyTitle ?? t("emptyTitle")}
+          </Text>
+          <Text
+            variant="bodyMedium"
+            style={[styles.emptySub, { color: colors.onSurfaceVariant }]}
+          >
             {emptySubtitle ?? t("emptySubtitle")}
           </Text>
         </View>
@@ -66,7 +85,24 @@ export default function ChatList({
 
 const styles = StyleSheet.create({
   list: { paddingBottom: 100, paddingTop: 8 },
+  listEmpty: { flexGrow: 1 },
   headerWrap: { marginBottom: 4 },
-  emptyWrap: { paddingTop: 24, paddingHorizontal: 20, gap: 6 },
-  emptySub: { opacity: 0.7 },
+  emptyWrap: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 40,
+    gap: 12,
+    paddingTop: 40,
+    paddingBottom: 80,
+  },
+  emptyTitle: {
+    textAlign: "center",
+    fontWeight: "600",
+  },
+  emptySub: {
+    textAlign: "center",
+    opacity: 0.7,
+    lineHeight: 20,
+  },
 });

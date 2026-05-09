@@ -47,3 +47,7 @@ export async function deletePet(petId) {
 export async function setAdopted(petId) {
   return updatePet(petId, { status: "adopted" });
 }
+
+export async function reopenPet(petId) {
+  return updatePet(petId, { status: "available" });
+}

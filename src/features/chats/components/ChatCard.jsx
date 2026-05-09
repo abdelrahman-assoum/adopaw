@@ -9,6 +9,7 @@ export default function ChatCard({
   avatar,
   unreadCount = 0,
   onPress,
+  onLongPress,
 }) {
   const theme = useTheme();
   const { palette } = theme.colors;
@@ -42,6 +43,7 @@ export default function ChatCard({
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={onLongPress}
       style={({ pressed }) => [
         styles.card,
         { backgroundColor: theme.colors.surface },

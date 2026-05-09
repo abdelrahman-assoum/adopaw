@@ -129,7 +129,7 @@ export async function markMessagesRead(chatId, currentUserId) {
 
 export function createChatChannel(chatId, { onMessage, onTyping } = {}) {
   const channel = supabase
-    .channel(`chat:${chatId}`)
+    .channel(`chat:${chatId}:${Date.now()}`)
     .on(
       "postgres_changes",
       {
@@ -194,6 +194,16 @@ export async function getUnreadCount(userId) {
 
   // Count distinct chats that have at least one unread message
   return new Set((unreadMsgs ?? []).map((m) => m.chat_id)).size;
+}
+
+// ─── Delete Chat ──────────────────────────────────────────────────────────────
+
+export async function deleteChat(chatId) {
+  const { error } = await supabase
+    .from(TABLES.CHATS)
+    .delete()
+    .eq("id", chatId);
+  if (error) throw error;
 }
 
 // ─── Get or Create Chat ───────────────────────────────────────────────────────

@@ -70,13 +70,19 @@ export default function Signup() {
         return;
       }
 
+      // Supabase returns an empty identities array when the email is already
+      // registered — it doesn't return an error to prevent enumeration.
+      if (data.user?.identities?.length === 0) {
+        showError("User already registered");
+        return;
+      }
+
       if (data.session) {
-        // Supabase email auto-confirm is ON → session exists immediately
+        // Email auto-confirm is ON → session exists immediately
         await checkProfileAndRoute(data.user.id);
-      } 
-      else {
-        // Email confirmation required → send to OTP screen
-        router.replace({ pathname: "/otp", params: { email } });
+      } else {
+        // Email confirmation required → push so back arrow returns here
+        router.push({ pathname: "/otp", params: { email } });
       }
     } catch (e) {
       showError(e.message);

@@ -4,6 +4,7 @@
     "pets": "My Pets",
     "requests": "Requests",
     "notifications": "Notifications",
+    "petPreferences": "Pet Preferences",
     "appearance": "App Appearance",
     "invite": "Invite Friends",
     "help": "Help Center",
@@ -51,6 +52,8 @@
     "cancelConfirmMessage": "Are you sure you want to cancel this adoption request?",
     "declineConfirmTitle": "Decline Request?",
     "declineConfirmMessage": "Are you sure you want to decline this adoption request?",
+    "declineNoteHint": "You can optionally add a note to explain your decision.",
+    "declineNotePlaceholder": "Add a reason (optional)…",
     "chatError": "Could not open chat. Try again."
   },
   "appearance": {
@@ -77,6 +80,13 @@
       "message": "Language changed to {{language}}. The app will reload to apply the new layout.",
       "error": "Failed to change language. Please try again."
     }
+  },
+  "petPreferences": {
+    "title": "Pet Preferences",
+    "description": "Update the type of pets you're looking for.",
+    "save": "Save Preferences",
+    "saveSuccess": "Preferences saved!",
+    "noPrefsHint": "No preferences set yet — set them here."
   },
   "help": {
     "title": "Help Center",

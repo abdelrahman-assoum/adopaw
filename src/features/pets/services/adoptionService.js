@@ -85,21 +85,34 @@ export async function fetchPendingReceivedCount(userId) {
   return count ?? 0;
 }
 
-export async function acceptAdoptionRequest(requestId) {
-  const { data, error } = await supabase
+export async function acceptAdoptionRequest(requestId, petId) {
+  const { error } = await supabase
     .from(TABLES.ADOPTION_REQUESTS)
     .update({ status: "accepted" })
-    .eq("id", requestId)
-    .select()
-    .single();
+    .eq("id", requestId);
   if (error) throw error;
-  return data;
+
+  if (petId) {
+    const { error: petError } = await supabase
+      .from(TABLES.PETS)
+      .update({ status: "adopted" })
+      .eq("id", petId);
+    if (petError) throw petError;
+  }
 }
 
-export async function declineAdoptionRequest(requestId) {
+export async function deleteRequestsForPet(petId) {
+  const { error } = await supabase
+    .from(TABLES.ADOPTION_REQUESTS)
+    .delete()
+    .eq("pet_id", petId);
+  if (error) throw error;
+}
+
+export async function declineAdoptionRequest(requestId, ownerNote) {
   const { data, error } = await supabase
     .from(TABLES.ADOPTION_REQUESTS)
-    .update({ status: "declined" })
+    .update({ status: "declined", owner_note: ownerNote ?? null })
     .eq("id", requestId)
     .select()
     .single();

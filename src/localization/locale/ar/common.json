@@ -109,6 +109,9 @@
     "roborovski": "روبوروفسكي",
     "chineseHamster": "هامستر صيني"
   },
+  "status": {
+    "adopted": "تم التبني"
+  },
   "done": "تم",
   "location": {
     "label": "الموقع",

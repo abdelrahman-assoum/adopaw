@@ -23,11 +23,12 @@ async function fetchPetsPage({ pageParam = 0, filters = {} }) {
     .order("created_at", { ascending: false })
     .range(pageParam, pageParam + PAGE_SIZE - 1);
 
-  if (filters.species?.length)        query = query.in("species", filters.species);
-  if (filters.gender?.length)        query = query.in("gender", filters.gender);
-  if (filters.size?.length)          query = query.in("size", filters.size);
-  if (filters.activity_level?.length) query = query.in("activity_level", filters.activity_level);
-  if (filters.search)                query = query.ilike("name", `%${filters.search}%`);
+  if (filters.hideOwnPets && filters.userId) query = query.neq("posted_by", filters.userId);
+  if (filters.species?.length)               query = query.in("species", filters.species);
+  if (filters.gender?.length)                query = query.in("gender", filters.gender);
+  if (filters.size?.length)                  query = query.in("size", filters.size);
+  if (filters.activity_level?.length)        query = query.in("activity_level", filters.activity_level);
+  if (filters.search)                        query = query.ilike("name", `%${filters.search}%`);
   if (filters.age?.length) {
     const orParts = filters.age
       .filter((k) => AGE_FILTERS[k])

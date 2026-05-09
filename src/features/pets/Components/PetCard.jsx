@@ -20,7 +20,7 @@ function formatAge(ageValue, ageUnit, t) {
   return `${ageValue} ${ageUnit}`;
 }
 
-export default function PetCard({ pet, onPress, distanceText }) {
+export default function PetCard({ pet, onPress, distanceText, status }) {
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const { t } = useTranslationLoader("common");
@@ -37,6 +37,7 @@ export default function PetCard({ pet, onPress, distanceText }) {
 
   const headerBg = headerBgBySpecies[pet.species] ?? "#F3F4F6";
   const nameFont = theme.fonts.titleLarge;
+  const isAdopted = status === "adopted";
 
   return (
     <TouchableOpacity
@@ -45,7 +46,16 @@ export default function PetCard({ pet, onPress, distanceText }) {
       style={[styles.card, { width: cardWidth, backgroundColor: theme.colors.surface }]}
     >
       <View style={[styles.header, { backgroundColor: headerBg }]}>
-        <Image source={{ uri: pet.images?.[0] }} style={styles.image} resizeMode="cover" />
+        <Image
+          source={{ uri: pet.images?.[0] }}
+          style={[styles.image, isAdopted && styles.imageDimmed]}
+          resizeMode="cover"
+        />
+        {isAdopted && (
+          <View style={[styles.statusOverlay, styles.adoptedOverlay]}>
+            <Text style={styles.statusOverlayText}>{t("status.adopted")}</Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.content}>
@@ -115,6 +125,22 @@ const styles = StyleSheet.create({
   },
   header: { borderRadius: RADIUS, overflow: "hidden" },
   image: { width: "100%", aspectRatio: 1 },
+  imageDimmed: { opacity: 0.55 },
+  statusOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 6,
+    alignItems: "center",
+  },
+  adoptedOverlay: { backgroundColor: "rgba(34,197,94,0.85)" },
+  statusOverlayText: {
+    color: "#fff",
+    fontSize: 12,
+    fontFamily: "Alexandria_600SemiBold",
+    letterSpacing: 0.3,
+  },
   content: { marginTop: 10 },
   titleRow: { flexDirection: "row", alignItems: "center" },
   pills: { flexDirection: "row", flexWrap: "wrap", marginTop: 10 },

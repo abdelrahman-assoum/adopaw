@@ -1,6 +1,6 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getOrCreateChat } from "@/src/features/chats/services/chatService";
 import {
   ActivityIndicator,
@@ -8,7 +8,12 @@ import {
   FlatList,
   I18nManager,
   Image,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -31,6 +36,8 @@ function RequestCard({ request, tab, userId }) {
   const theme = useTheme();
   const router = useRouter();
   const { t } = useTranslationLoader("profile");
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [declineNote, setDeclineNote] = useState("");
 
   const handleOpenChat = async () => {
     const otherUserId = tab === "sent"
@@ -76,11 +83,14 @@ function RequestCard({ request, tab, userId }) {
     ]);
   };
 
-  const handleDecline = () => {
-    Alert.alert(t("requests.declineConfirmTitle"), t("requests.declineConfirmMessage"), [
-      { text: t("common.cancel"), style: "cancel" },
-      { text: t("requests.decline"), style: "destructive", onPress: () => declineRequest(request.id) },
-    ]);
+  const openDeclineModal = () => {
+    setDeclineNote("");
+    setShowDeclineModal(true);
+  };
+
+  const confirmDecline = () => {
+    setShowDeclineModal(false);
+    declineRequest({ requestId: request.id, ownerNote: declineNote.trim() || null });
   };
 
   const statusConfig = {
@@ -91,6 +101,7 @@ function RequestCard({ request, tab, userId }) {
   const statusStyle = statusConfig[request.status] ?? statusConfig.pending;
 
   return (
+    <>
     <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
       {/* Pet image */}
       <View style={styles.cardImage}>
@@ -136,6 +147,15 @@ function RequestCard({ request, tab, userId }) {
             </Text>
           </View>
         ) : null}
+
+        {tab === "received" && request.requester_note ? (
+          <Text
+            style={[styles.requesterNote, { color: theme.colors.palette.neutral[500] }]}
+            numberOfLines={2}
+          >
+            "{request.requester_note}"
+          </Text>
+        ) : null}
       </View>
 
       {/* Actions */}
@@ -179,7 +199,16 @@ function RequestCard({ request, tab, userId }) {
 
             {request.status === "pending" ? (
               <>
-                <TouchableOpacity style={styles.actionBtn} onPress={() => acceptRequest(request.id)} disabled={accepting}>
+                <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={() =>
+                    acceptRequest(
+                      { requestId: request.id, petId: pet?.id },
+                      { onError: (err) => Alert.alert(t("common.error"), err.message) }
+                    )
+                  }
+                  disabled={accepting}
+                >
                   <View style={[styles.actionCircle, { backgroundColor: "#BCE8D3" }]}>
                     {accepting
                       ? <ActivityIndicator size="small" color="#2D9B66" />
@@ -188,7 +217,7 @@ function RequestCard({ request, tab, userId }) {
                   <Text style={[styles.actionLabel, { color: "#2D9B66" }]}>{t("requests.accept")}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionBtn} onPress={handleDecline} disabled={declining}>
+                <TouchableOpacity style={styles.actionBtn} onPress={openDeclineModal} disabled={declining}>
                   <View style={[styles.actionCircle, { backgroundColor: "#F6D7D7" }]}>
                     {declining
                       ? <ActivityIndicator size="small" color="#AF2E2E" />
@@ -209,6 +238,72 @@ function RequestCard({ request, tab, userId }) {
         )}
       </View>
     </View>
+
+    {/* Decline with note modal */}
+    <Modal
+      visible={showDeclineModal}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setShowDeclineModal(false)}
+    >
+      <Pressable
+        style={styles.modalOverlay}
+        onPress={() => setShowDeclineModal(false)}
+      />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.modalKAV}
+        pointerEvents="box-none"
+      >
+        <View style={[styles.declineSheet, { backgroundColor: theme.colors.surface }]}>
+          <Text style={[styles.declineTitle, { color: theme.colors.onSurface }]}>
+            {t("requests.declineConfirmTitle")}
+          </Text>
+          <Text style={[styles.declineSubtitle, { color: theme.colors.palette.neutral[500] }]}>
+            {t("requests.declineNoteHint")}
+          </Text>
+          <TextInput
+            value={declineNote}
+            onChangeText={setDeclineNote}
+            placeholder={t("requests.declineNotePlaceholder")}
+            placeholderTextColor={theme.colors.palette.neutral[400]}
+            multiline
+            style={[
+              styles.declineInput,
+              {
+                color: theme.colors.onSurface,
+                borderColor: theme.colors.outline,
+                backgroundColor: theme.colors.background,
+              },
+            ]}
+            textAlignVertical="top"
+          />
+          <View style={styles.declineActions}>
+            <TouchableOpacity
+              style={[styles.declineBtn, { backgroundColor: theme.colors.surfaceVariant }]}
+              onPress={() => setShowDeclineModal(false)}
+            >
+              <Text style={[styles.declineBtnText, { color: theme.colors.onSurface }]}>
+                {t("common.cancel")}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.declineBtn, { backgroundColor: "#F6D7D7" }]}
+              onPress={confirmDecline}
+              disabled={declining}
+            >
+              {declining
+                ? <ActivityIndicator size="small" color="#AF2E2E" />
+                : <Text style={[styles.declineBtnText, { color: "#AF2E2E" }]}>
+                    {t("requests.decline")}
+                  </Text>
+              }
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  </>
   );
 }
 
@@ -486,5 +581,65 @@ const styles = StyleSheet.create({
     fontFamily: "Alexandria_600SemiBold",
     fontSize: 12,
     lineHeight: 16,
+  },
+  requesterNote: {
+    fontFamily: "Alexandria_300Light",
+    fontSize: 11,
+    lineHeight: 16,
+    fontStyle: "italic",
+  },
+
+  // ── Decline modal ─────────────────────────────────────────────────────────
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  modalKAV: {
+    flex: 1,
+    justifyContent: "flex-end",
+    pointerEvents: "box-none",
+  },
+  declineSheet: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    gap: 14,
+    paddingBottom: 40,
+  },
+  declineTitle: {
+    fontFamily: "Alexandria_600SemiBold",
+    fontSize: 18,
+    lineHeight: 26,
+  },
+  declineSubtitle: {
+    fontFamily: "Alexandria_400Regular",
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  declineInput: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    height: 90,
+    fontFamily: "Alexandria_300Light",
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  declineActions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  declineBtn: {
+    flex: 1,
+    borderRadius: 20,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  declineBtnText: {
+    fontFamily: "Alexandria_600SemiBold",
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

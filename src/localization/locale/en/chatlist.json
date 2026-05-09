@@ -6,5 +6,9 @@
   "chatWith": "Chat",
   "pawloName": "Pawlo",
   "pawloRole": "AI Assistant",
-  "pawloSubtitle": "Ask me anything about pets!"
+  "pawloSubtitle": "Ask me anything about pets!",
+  "deleteChat": "Delete Chat",
+  "deleteConfirmTitle": "Delete Chat?",
+  "deleteConfirmMessage": "This will permanently delete the conversation and all messages for both users.",
+  "cancel": "Cancel"
 }

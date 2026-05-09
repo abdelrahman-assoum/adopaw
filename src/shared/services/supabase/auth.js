@@ -64,6 +64,26 @@ export async function resendOtp(email) {
   return supabase.auth.resend({ type: "signup", email });
 }
 
+export async function checkEmailExists(email) {
+  const { data, error } = await supabase.rpc("check_email_exists", {
+    email_input: email.toLowerCase(),
+  });
+  if (error) return true; // fail open — don't block the user if the check itself fails
+  return data;
+}
+
+export async function resetPasswordForEmail(email) {
+  return supabase.auth.resetPasswordForEmail(email);
+}
+
+export async function verifyRecoveryOtp(email, token) {
+  return supabase.auth.verifyOtp({ email, token, type: "recovery" });
+}
+
+export async function updateUserPassword(newPassword) {
+  return supabase.auth.updateUser({ password: newPassword });
+}
+
 export async function signOut() {
   return supabase.auth.signOut();
 }

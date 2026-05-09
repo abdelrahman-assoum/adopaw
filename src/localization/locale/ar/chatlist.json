@@ -6,5 +6,9 @@
   "chatWith": "محادثة",
   "pawloName": "بولو",
   "pawloRole": "مساعد ذكي",
-  "pawloSubtitle": "اسألني أي شيء عن الحيوانات الأليفة!"
+  "pawloSubtitle": "اسألني أي شيء عن الحيوانات الأليفة!",
+  "deleteChat": "حذف المحادثة",
+  "deleteConfirmTitle": "حذف المحادثة؟",
+  "deleteConfirmMessage": "سيتم حذف المحادثة وجميع الرسائل نهائياً لكلا المستخدمين.",
+  "cancel": "إلغاء"
 }

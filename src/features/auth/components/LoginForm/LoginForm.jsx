@@ -2,9 +2,11 @@ import { useState } from "react";
 import {
   Keyboard,
   StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { Text, useTheme } from "react-native-paper";
 
 import LoginWithGoogleButton from "@/src/features/auth/components/LoginWithGoogle/LoginWithGoogle";
 import OrDivider from "@/src/features/auth/components/OrDivider/OrDivider";
@@ -22,8 +24,10 @@ export default function LoginForm({
   onGoogleLogin,
   loading,
   onNavigateToSignup,
+  onNavigateToForgotPassword,
 }) {
   const { t } = useTranslationLoader("auth");
+  const { colors } = useTheme();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -89,6 +93,15 @@ export default function LoginForm({
           errorMessage={errors.password}
         />
 
+        <TouchableOpacity
+          onPress={onNavigateToForgotPassword}
+          style={styles.forgotPassword}
+        >
+          <Text style={[styles.forgotPasswordText, { color: colors.primary }]}>
+            {t("login.forgotPassword")}
+          </Text>
+        </TouchableOpacity>
+
         <AppButton
           text={t("login.buttons.default")}
           onPress={handleLogin}
@@ -117,5 +130,12 @@ const styles = StyleSheet.create({
   form: {
     flexDirection: "column",
     gap: 10,
+  },
+  forgotPassword: {
+    alignSelf: "flex-end",
+  },
+  forgotPasswordText: {
+    fontSize: 13,
+    fontWeight: "600",
   },
 });

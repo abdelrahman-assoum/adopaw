@@ -17,20 +17,18 @@ import Heading from "@/src/shared/components/ui/Heading/Heading";
 import LoadingModal from "@/src/shared/components/ui/LoadingModal/LoadingModal";
 import AppSnackbar from "@/src/shared/components/ui/Snackbar/AppSnackbar";
 import {
-  resendOtp,
-  verifyOtp,
+  resetPasswordForEmail,
+  verifyRecoveryOtp,
 } from "@/src/shared/services/supabase/auth";
-import { supabase } from "@/src/shared/services/supabase/client";
 import { mapSupabaseError } from "@/src/shared/utils/errorMapper";
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 30;
 
-export default function Otp() {
+export default function ResetOtp() {
   const router = useRouter();
   const { colors, fonts } = useTheme();
   const { t } = useTranslationLoader("auth");
-
   const { email } = useLocalSearchParams();
 
   // ─── OTP cells ────────────────────────────────────────────────────────────
@@ -73,22 +71,10 @@ export default function Otp() {
     }, 1000);
   }
 
-  // ─── Snackbar helper ──────────────────────────────────────────────────────
   function showError(supabaseMessage) {
     const key = mapSupabaseError(supabaseMessage).replace("auth.", "");
     setSnackbarMessage(t(key));
     setSnackbarVisible(true);
-  }
-
-  // ─── Profile check ────────────────────────────────────────────────────────
-  async function checkProfileAndRoute(userId) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("id", userId)
-      .single();
-
-    router.replace(profile ? "/(tabs)/home" : "/profile-complete");
   }
 
   // ─── Input handlers ───────────────────────────────────────────────────────
@@ -138,7 +124,7 @@ export default function Otp() {
     setLoading(true);
 
     try {
-      const { data, error } = await verifyOtp(email, token);
+      const { error } = await verifyRecoveryOtp(email, token);
 
       if (error) {
         showError(error.message);
@@ -147,7 +133,7 @@ export default function Otp() {
         return;
       }
 
-      await checkProfileAndRoute(data.user.id);
+      router.replace("/new-password");
     } catch (e) {
       showError(e.message);
     } finally {
@@ -160,7 +146,7 @@ export default function Otp() {
     if (cooldown > 0) return;
     setLoading(true);
     try {
-      const { error } = await resendOtp(email);
+      const { error } = await resetPasswordForEmail(email);
       if (error) {
         showError(error.message);
       } else {
@@ -199,8 +185,8 @@ export default function Otp() {
         </TouchableOpacity>
 
         <Heading
-          title={t("otp.title")}
-          description={t("otp.description")}
+          title={t("resetOtp.title")}
+          description={t("resetOtp.description")}
           align="start"
         />
 
@@ -248,7 +234,7 @@ export default function Otp() {
               { color: colors.palette?.neutral?.[500] ?? "#6b7280" },
             ]}
           >
-            {t("otp.resend.prompt")}
+            {t("resetOtp.resend.prompt")}
           </Text>
 
           <TouchableOpacity onPress={handleResend} disabled={cooldown > 0}>
@@ -265,15 +251,15 @@ export default function Otp() {
               ]}
             >
               {cooldown > 0
-                ? t("otp.resend.buttonCooldown", { seconds: cooldown })
-                : t("otp.resend.buttonActive")}
+                ? t("resetOtp.resend.buttonCooldown", { seconds: cooldown })
+                : t("resetOtp.resend.buttonActive")}
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* ── Verify button ────────────────────────────────────────────────── */}
         <AppButton
-          text={t("otp.verify")}
+          text={t("resetOtp.verify")}
           onPress={handleVerify}
           loading={loading}
           disabled={!isFilled}

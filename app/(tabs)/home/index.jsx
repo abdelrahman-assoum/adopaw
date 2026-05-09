@@ -44,7 +44,9 @@ export default function Home() {
     activity_level: parseParam(params.activity),
     age:            parseParam(params.age),
     search:         searchQuery.trim() || null,
-  }), [selectedCategory, params, searchQuery]);
+    hideOwnPets:    params.hideOwnPets === "true",
+    userId,
+  }), [selectedCategory, params, searchQuery, userId]);
 
   const activeCount = FILTER_KEYS.filter((k) => params[k] && params[k] !== "").length;
 

@@ -22,7 +22,8 @@ import PetHeader from "@/src/features/pets/Components/PetDetails/PetHeader";
 import PostedByCard from "@/src/features/pets/Components/PetDetails/PostedByCard";
 import StatCards from "@/src/features/pets/Components/PetDetails/StatCards";
 import AdoptionBottomSheet from "@/src/features/pets/Components/AdoptionBottomSheet";
-import { deletePet, setAdopted } from "@/src/features/pets/services/petService";
+import { deletePet, reopenPet, setAdopted } from "@/src/features/pets/services/petService";
+import { deleteRequestsForPet } from "@/src/features/pets/services/adoptionService";
 import { useMyAdoptionRequest, useSendAdoptionRequest } from "@/src/features/pets/hooks/useAdoptionRequest";
 import { getReadableAddress } from "@/src/features/home/utils/distance";
 import { formatTimeAgo } from "@/src/features/home/utils/timeAgo";
@@ -33,6 +34,7 @@ import { deleteImage } from "@/src/shared/services/supabase/upload";
 import { getOrCreateChat } from "@/src/features/chats/services/chatService";
 import AppButton from "@/src/shared/components/ui/AppButton/AppButton";
 import LoadingModal from "@/src/shared/components/ui/LoadingModal/LoadingModal";
+import PawLoader from "@/src/shared/components/ui/PawLoader/PawLoader";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -98,6 +100,32 @@ export default function PetDetailScreen() {
             setSnackbarVisible(true);
           } catch {
             Alert.alert(t("adoptErrorTitle"), t("adoptErrorMessage"));
+          } finally {
+            setLoading(false);
+          }
+        },
+      },
+    ]);
+  };
+
+  const handleReopenPet = () => {
+    setMenuVisible(false);
+    Alert.alert(t("confirmReopenTitle"), t("confirmReopenMessage"), [
+      { text: t("cancel"), style: "cancel" },
+      {
+        text: t("confirm"),
+        onPress: async () => {
+          try {
+            setLoading(true);
+            await deleteRequestsForPet(petId);
+            await reopenPet(petId);
+            await queryClient.invalidateQueries({ queryKey: ["pet", petId] });
+            await queryClient.invalidateQueries({ queryKey: ["pets"] });
+            await queryClient.invalidateQueries({ queryKey: ["userPets"] });
+            setSnackbarMsg(t("reopenSuccess"));
+            setSnackbarVisible(true);
+          } catch {
+            Alert.alert(t("reopenErrorTitle"), t("reopenErrorMessage"));
           } finally {
             setLoading(false);
           }
@@ -204,17 +232,6 @@ export default function PetDetailScreen() {
       );
     }
 
-    if (pet.status === "reserved") {
-      return (
-        <AppButton
-          text={t("noLongerAvailable")}
-          disabled
-          style={styles.adoptButton}
-          onPress={() => {}}
-        />
-      );
-    }
-
     return (
       <AppButton
         text={t("adoptMe")}
@@ -225,7 +242,11 @@ export default function PetDetailScreen() {
   };
 
   if (isLoading) {
-    return <Text style={{ padding: 16 }}>{t("loading")}</Text>;
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <PawLoader text={t("loading")} />
+      </View>
+    );
   }
   if (error || !pet) {
     return <Text style={{ padding: 16, color: theme.colors.error }}>{t("error")}</Text>;
@@ -394,12 +415,21 @@ export default function PetDetailScreen() {
       >
         <Pressable style={StyleSheet.absoluteFill} onPress={() => setMenuVisible(false)} />
         <View style={[styles.customMenu, { backgroundColor: menuBg }]}>
-          <TouchableOpacity style={styles.menuRow} onPress={handleMarkAsAdopted} activeOpacity={0.7}>
-            <Ionicons name="checkmark-done-outline" size={20} color={menuTextColor} />
-            <Text style={[styles.menuRowText, { color: menuTextColor }]}>
-              {t("confirmAdoptTitle")}
-            </Text>
-          </TouchableOpacity>
+          {pet.status === "adopted" ? (
+            <TouchableOpacity style={styles.menuRow} onPress={handleReopenPet} activeOpacity={0.7}>
+              <Ionicons name="refresh-outline" size={20} color={menuTextColor} />
+              <Text style={[styles.menuRowText, { color: menuTextColor }]}>
+                {t("reopenPet")}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.menuRow} onPress={handleMarkAsAdopted} activeOpacity={0.7}>
+              <Ionicons name="checkmark-done-outline" size={20} color={menuTextColor} />
+              <Text style={[styles.menuRowText, { color: menuTextColor }]}>
+                {t("confirmAdoptTitle")}
+              </Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={styles.menuRow}
             activeOpacity={0.7}

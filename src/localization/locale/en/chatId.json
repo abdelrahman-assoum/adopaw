@@ -5,5 +5,9 @@
   "today": "Today",
   "typing": "typing...",
   "placeholder": "Type a message…",
-  "sendError": "Failed to send. Try again."
+  "sendError": "Failed to send. Try again.",
+  "deleteChat": "Delete Chat",
+  "deleteConfirmTitle": "Delete Chat?",
+  "deleteConfirmMessage": "This will permanently delete the conversation and all messages for both users.",
+  "cancel": "Cancel"
 }

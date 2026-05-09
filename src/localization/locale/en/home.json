@@ -32,7 +32,11 @@
     "label": "Location (km)"
   },
   "filters": {
-    "title": "Filters"
+    "title": "Filters",
+    "useMyPrefs": "Use My Preferences",
+    "noPrefsHint": "Set your preferences in Profile → Pet Preferences",
+    "hideOwnPets": "Hide my own listings",
+    "hideOwnPetsHint": "Your pets won't appear in the browse feed"
   },
   "category": {
     "label": "Category",

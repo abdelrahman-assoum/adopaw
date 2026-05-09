@@ -66,10 +66,12 @@ export function usePendingReceivedCount(userId) {
 export function useAcceptRequest(userId) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (requestId) => acceptAdoptionRequest(requestId),
+    mutationFn: ({ requestId, petId }) => acceptAdoptionRequest(requestId, petId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["receivedRequests", userId] });
       queryClient.invalidateQueries({ queryKey: ["pendingReceivedCount", userId] });
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
+      queryClient.invalidateQueries({ queryKey: ["userPets"] });
     },
   });
 }
@@ -77,7 +79,7 @@ export function useAcceptRequest(userId) {
 export function useDeclineRequest(userId) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (requestId) => declineAdoptionRequest(requestId),
+    mutationFn: ({ requestId, ownerNote }) => declineAdoptionRequest(requestId, ownerNote),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["receivedRequests", userId] });
       queryClient.invalidateQueries({ queryKey: ["pendingReceivedCount", userId] });

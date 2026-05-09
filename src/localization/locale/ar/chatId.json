@@ -5,5 +5,9 @@
   "today": "اليوم",
   "typing": "يكتب...",
   "placeholder": "اكتب رسالة…",
-  "sendError": "فشل الإرسال. حاول مجدداً."
+  "sendError": "فشل الإرسال. حاول مجدداً.",
+  "deleteChat": "حذف المحادثة",
+  "deleteConfirmTitle": "حذف المحادثة؟",
+  "deleteConfirmMessage": "سيتم حذف المحادثة وجميع الرسائل نهائياً لكلا المستخدمين.",
+  "cancel": "إلغاء"
 }

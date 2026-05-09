@@ -67,5 +67,11 @@
   "requestSentSuccess": "Your adoption request has been sent!",
   "requestError": "Failed to send request. Please try again.",
   "chatWithOwner": "Chat with Owner",
-  "chatError": "Could not open chat. Try again."
+  "chatError": "Could not open chat. Try again.",
+  "reopenPet": "Reopen for Adoption",
+  "confirmReopenTitle": "Reopen Pet?",
+  "confirmReopenMessage": "This will make the pet available again and remove all previous adoption requests.",
+  "reopenSuccess": "Pet is available for adoption again.",
+  "reopenErrorTitle": "Error",
+  "reopenErrorMessage": "Failed to reopen the pet. Please try again."
 }
