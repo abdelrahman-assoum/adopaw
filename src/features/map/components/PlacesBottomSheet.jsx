@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Animated,
+  Easing,
   FlatList,
   PanResponder,
   StyleSheet,
@@ -26,6 +27,10 @@ export default function PlacesBottomSheet({
   onClearSelection,
   onSelectPlace,
   maxHeight = 360,
+  compact = false,
+  keyboardOpen = false,
+  keyboardSnapHeight,
+  keyboardAnimDuration = 250,
 }) {
   const { t } = useTranslationLoader("map");
   const theme = useTheme();
@@ -36,33 +41,52 @@ export default function PlacesBottomSheet({
   const countCol = theme.dark ? "#9CA3AF" : "#777";
   const border   = theme.dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
 
-  const heightAnim   = useRef(new Animated.Value(SNAP_DEFAULT)).current;
-  const startHeight  = useRef(SNAP_DEFAULT);
-  const maxHeightRef = useRef(maxHeight);
+  const heightAnim      = useRef(new Animated.Value(SNAP_DEFAULT)).current;
+  const startHeight     = useRef(SNAP_DEFAULT);
+  const maxHeightRef    = useRef(maxHeight);
+  const compactRef      = useRef(compact);
+  const keyboardOpenRef = useRef(keyboardOpen);
+  const keyboardDurRef  = useRef(keyboardAnimDuration);
 
   useEffect(() => { maxHeightRef.current = maxHeight; }, [maxHeight]);
+  useEffect(() => { compactRef.current = compact; }, [compact]);
+  useEffect(() => { keyboardOpenRef.current = keyboardOpen; }, [keyboardOpen]);
+  useEffect(() => { keyboardDurRef.current = keyboardAnimDuration; }, [keyboardAnimDuration]);
 
-  const snapTo = useCallback((h) => {
+  const snapTo = useCallback((h, useKeyboardCurve = false) => {
     startHeight.current = h;
-    Animated.spring(heightAnim, {
-      toValue: h,
-      useNativeDriver: false,
-      bounciness: 4,
-    }).start();
+    if (useKeyboardCurve) {
+      Animated.timing(heightAnim, {
+        toValue: h,
+        duration: keyboardDurRef.current,
+        easing: Easing.out(Easing.bezier(0.25, 0.46, 0.45, 0.94)),
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.spring(heightAnim, {
+        toValue: h,
+        useNativeDriver: false,
+        bounciness: 4,
+      }).start();
+    }
   }, [heightAnim]);
 
-  // Snap when a pin is selected/deselected
+  // Snap when selection, compact mode, keyboard, or snap targets change
   useEffect(() => {
-    if (selectedPlace) {
-      snapTo(SNAP_SINGLE);
+    if (compact) {
+      snapTo(SNAP_PEEK);
+    } else if (keyboardOpen && keyboardSnapHeight != null) {
+      snapTo(keyboardSnapHeight, true);
+    } else if (selectedPlace) {
+      snapTo(Math.min(SNAP_SINGLE, maxHeight));
     } else {
-      snapTo(SNAP_DEFAULT);
+      snapTo(Math.min(SNAP_DEFAULT, maxHeight));
     }
-  }, [selectedPlace, snapTo]);
+  }, [selectedPlace, compact, keyboardOpen, keyboardSnapHeight, maxHeight, snapTo]);
 
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 5,
+      onMoveShouldSetPanResponder: (_, g) => !compactRef.current && !keyboardOpenRef.current && Math.abs(g.dy) > 5,
       onPanResponderGrant: () => {
         heightAnim.stopAnimation((v) => { startHeight.current = v; });
       },

@@ -14,5 +14,10 @@
   "closed": "Closed",
   "reviews": "{{count}} reviews",
   "directions": "Directions",
-  "share": "Share"
+  "share": "Share",
+  "viewProfile": "View Pet Detail",
+  "showPets": "Show nearby pets",
+  "hidePets": "Hide pets",
+  "petsFound": "{{count}} pets in this area",
+  "noPetsFound": "No pets in this area"
 }
