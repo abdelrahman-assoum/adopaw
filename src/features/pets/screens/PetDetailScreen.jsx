@@ -346,6 +346,42 @@ export default function PetDetailScreen() {
 
         <AboutText description={pet.description || t("noDescription")} />
 
+        {/* Ask Pawlo about this pet */}
+        <TouchableOpacity
+          activeOpacity={0.82}
+          onPress={() => router.push({ pathname: "/(tabs)/chats/pawlo", params: { petId } })}
+          style={[
+            styles.pawloCard,
+            {
+              backgroundColor: isDark ? theme.colors.palette.blue[900] : theme.colors.palette.blue[100],
+              borderColor: isDark ? theme.colors.palette.blue[700] : theme.colors.palette.blue[200],
+            },
+          ]}
+        >
+          {/* Decorative background paw */}
+          <Text style={styles.pawloBgDecor}>🐾</Text>
+
+          {/* Avatar */}
+          <View style={[styles.pawloAvatar, { backgroundColor: theme.colors.palette.blue[500] }]}>
+            <Ionicons name="paw" size={22} color="#fff" />
+          </View>
+
+          {/* Text */}
+          <View style={styles.pawloTextArea}>
+            <Text style={[styles.pawloTitle, { color: isDark ? theme.colors.palette.blue[100] : theme.colors.palette.blue[800] }]}>
+              Ask Pawlo about {pet.name}
+            </Text>
+            <Text style={[styles.pawloSubtitle, { color: isDark ? theme.colors.palette.blue[300] : theme.colors.palette.blue[600] }]}>
+              AI-powered pet advice, just for you
+            </Text>
+          </View>
+
+          {/* Arrow pill */}
+          <View style={[styles.pawloArrow, { backgroundColor: theme.colors.palette.blue[500] }]}>
+            <Ionicons name="chevron-forward" size={15} color="#fff" />
+          </View>
+        </TouchableOpacity>
+
         {pet.lat != null && (
           <View style={styles.section}>
             <Text variant="headlineMedium" style={styles.sectionTitle}>{t("locationTitle")}</Text>
@@ -509,6 +545,57 @@ const styles = StyleSheet.create({
   locationInfoRow: { flexDirection: "row", alignItems: "center", marginTop: 8 },
   locationText: { fontSize: 14, color: "#6c757d", flexShrink: 1 },
   adoptButton: { marginTop: 24, alignSelf: "center" },
+  pawloCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderWidth: 1.5,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    marginTop: 20,
+    overflow: "hidden",
+    shadowColor: "#4D9DE0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  pawloBgDecor: {
+    position: "absolute",
+    right: 48,
+    top: -8,
+    fontSize: 72,
+    opacity: 0.07,
+  },
+  pawloAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pawloTextArea: {
+    flex: 1,
+    gap: 3,
+  },
+  pawloTitle: {
+    fontFamily: "Alexandria_700Bold",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  pawloSubtitle: {
+    fontFamily: "Alexandria_400Regular",
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  pawloArrow: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   ctaWrapper: { marginTop: 24, gap: 8 },
   pendingButton: {
     flexDirection: "row",

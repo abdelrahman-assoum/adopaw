@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
   I18nManager,
   Image,
   Keyboard,
@@ -50,26 +51,27 @@ export default function ChatInput({ onSend, onTyping }) {
     const trimmed = message.trim();
     if (!trimmed && !pendingImage) return;
 
+    // Capture and clear immediately so input doesn't freeze during upload/AI call
+    const imageToSend = pendingImage;
+    const textToSend = trimmed;
+    setMessage("");
+    setPendingImage(null);
+
     try {
-      if (pendingImage) {
-        await onSend?.("image", { imageUrl: pendingImage });
-      }
-      if (trimmed) {
-        await onSend?.("text", { text: trimmed });
+      if (imageToSend) {
+        await onSend?.("image", { imageUrl: imageToSend, text: textToSend || null });
+      } else {
+        await onSend?.("text", { text: textToSend });
       }
     } catch (err) {
       console.warn("Send failed:", err?.message);
-    } finally {
-      setMessage("");
-      setPendingImage(null);
     }
   }, [message, pendingImage, onSend]);
 
-  const handlePickImage = async () => {
+  const openLibrary = async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") return;
-
       const imageEnum =
         ImagePicker?.MediaType?.Images ?? ImagePicker?.MediaTypeOptions?.Images;
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -77,13 +79,36 @@ export default function ChatInput({ onSend, onTyping }) {
         quality: 0.8,
         ...(imageEnum ? { mediaTypes: imageEnum } : {}),
       });
-
       if (result.canceled) return;
       const uri = result.assets?.[0]?.uri;
       if (uri) setPendingImage(uri);
     } catch (err) {
       console.warn("Pick image failed:", err?.message);
     }
+  };
+
+  const openCamera = async () => {
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") return;
+      const result = await ImagePicker.launchCameraAsync({
+        quality: 0.8,
+        allowsEditing: false,
+      });
+      if (result.canceled) return;
+      const uri = result.assets?.[0]?.uri;
+      if (uri) setPendingImage(uri);
+    } catch (err) {
+      console.warn("Camera failed:", err?.message);
+    }
+  };
+
+  const handlePickImage = () => {
+    Alert.alert("Send Photo", null, [
+      { text: "Take Photo", onPress: openCamera },
+      { text: "Choose from Library", onPress: openLibrary },
+      { text: "Cancel", style: "cancel" },
+    ]);
   };
 
   return (

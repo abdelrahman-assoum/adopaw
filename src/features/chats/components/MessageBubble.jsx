@@ -28,6 +28,8 @@ export default function MessageBubble({ item, currentUserId }) {
     }
   }, [item?.createdAt]);
 
+  const isPending = !!item?.pending;
+
   return (
     <View style={[styles.row, { justifyContent: isMine ? "flex-end" : "flex-start" }]}>
       <Surface
@@ -35,7 +37,7 @@ export default function MessageBubble({ item, currentUserId }) {
         style={[
           styles.bubble,
           isMine ? styles.bubbleMine : styles.bubbleOther,
-          { backgroundColor: isMine ? bgMine : bgOther },
+          { backgroundColor: isMine ? bgMine : bgOther, opacity: isPending ? 0.65 : 1 },
         ]}
       >
         {!!item?.content?.text && (
@@ -46,11 +48,18 @@ export default function MessageBubble({ item, currentUserId }) {
             {item.content.text}
           </Text>
         )}
-        {!!timeLabel && (
-          <Text style={[styles.time, { color: isMine ? fgMine : palette?.neutral?.[500] }]}>
-            {timeLabel}
-          </Text>
-        )}
+        <View style={styles.footer}>
+          {isPending && (
+            <Text style={[styles.time, { color: isMine ? fgMine : palette?.neutral?.[500] }]}>
+              sending…
+            </Text>
+          )}
+          {!!timeLabel && !isPending && (
+            <Text style={[styles.time, { color: isMine ? fgMine : palette?.neutral?.[500] }]}>
+              {timeLabel}
+            </Text>
+          )}
+        </View>
       </Surface>
     </View>
   );
@@ -84,6 +93,9 @@ const styles = StyleSheet.create({
     fontFamily: "Alexandria_400Regular",
     fontSize: 14,
     lineHeight: 20,
+  },
+  footer: {
+    alignSelf: "flex-end",
   },
   time: {
     fontSize: 11,

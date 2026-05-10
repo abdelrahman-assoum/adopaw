@@ -48,6 +48,15 @@ export default function ChatsLayout() {
           headerLeft: () => backIcon,
         }}
       />
+      <Stack.Screen
+        name="pawlo-history"
+        options={{
+          headerShown: true,
+          title: "Chat History",
+          animation: "slide_from_right",
+          headerLeft: () => backIcon,
+        }}
+      />
     </Stack>
   );
 }

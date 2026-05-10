@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -32,6 +33,7 @@ export default function MapPage() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { region, setRegion, userLocation, loading: locationLoading, recenter } = useCurrentLocation();
+  const { focusPlaceId, focusLat, focusLng } = useLocalSearchParams();
 
   const [mapReady, setMapReady] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -115,6 +117,24 @@ export default function MapPage() {
 
   // ─── Places ───────────────────────────────────────────────────────────────────
   const { data: places = [], isFetching: loadingPlaces } = usePlaces(region);
+
+  // Focus a specific place when navigated from Pawlo suggestion card
+  useEffect(() => {
+    if (!focusPlaceId || !places.length) return;
+    const place = places.find((p) => p.id === focusPlaceId);
+    if (!place) return;
+    setSelectedPet(null);
+    setSelectedPlace(place);
+    if (focusLat && focusLng) {
+      setRegion((prev) => ({
+        ...prev,
+        latitude: parseFloat(focusLat),
+        longitude: parseFloat(focusLng),
+        latitudeDelta: 0.008,
+        longitudeDelta: 0.008,
+      }));
+    }
+  }, [focusPlaceId, places]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredPlaces = useMemo(() => {
     let result = places;

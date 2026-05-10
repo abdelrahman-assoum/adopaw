@@ -5,4 +5,6 @@ export const TABLES = {
   MESSAGES: "messages",
   PLACES: "places",
   ADOPTION_REQUESTS: "adoption_requests",
+  AI_CONVERSATIONS: "ai_conversations",
+  AI_MESSAGES: "ai_messages",
 };
