@@ -173,6 +173,7 @@ export default function ResetOtp() {
           visible={snackbarVisible && !loading}
           message={snackbarMessage}
           onDismiss={() => setSnackbarVisible(false)}
+          type="error"
         />
 
         {/* ── Back button ──────────────────────────────────────────────────── */}

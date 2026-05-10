@@ -12,7 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Snackbar, Text, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
+import AppSnackbar from "@/src/shared/components/ui/Snackbar/AppSnackbar";
 import MapView, { Marker } from "react-native-maps";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -259,20 +260,19 @@ export default function PetDetailScreen() {
   const menuTextColor = theme.colors.onSurface;
 
   return (
-    <ScrollView
-      style={{ backgroundColor: theme.colors.surface }}
-      contentContainerStyle={{ paddingBottom: 48 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <Snackbar
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+      <AppSnackbar
         visible={snackbarVisible}
+        message={snackbarMsg}
         onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        action={{ label: t("ok"), onPress: () => setSnackbarVisible(false) }}
-      >
-        {snackbarMsg}
-      </Snackbar>
+        type="success"
+      />
       <LoadingModal loading={loading} />
+      <ScrollView
+        style={{ backgroundColor: theme.colors.surface }}
+        contentContainerStyle={{ paddingBottom: 48 }}
+        showsVerticalScrollIndicator={false}
+      >
 
       {/* Hero image carousel */}
       <View style={styles.heroContainer}>
@@ -349,7 +349,7 @@ export default function PetDetailScreen() {
         {/* Ask Pawlo about this pet */}
         <TouchableOpacity
           activeOpacity={0.82}
-          onPress={() => router.push({ pathname: "/(tabs)/chats/pawlo", params: { petId } })}
+          onPress={() => router.push({ pathname: "/(tabs)/chats/pawlo", params: { petId, _source: "external" } })}
           style={[
             styles.pawloCard,
             {
@@ -492,6 +492,7 @@ export default function PetDetailScreen() {
         loading={sendingRequest}
       />
     </ScrollView>
+    </View>
   );
 }
 

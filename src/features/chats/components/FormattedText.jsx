@@ -1,6 +1,8 @@
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 
+const RTL_RE = /[֐-׿؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+
 // Splits a line into plain/bold segments based on **bold** markers
 function parseBold(line, textStyle, boldStyle) {
   const segments = [];
@@ -36,6 +38,16 @@ function parseBold(line, textStyle, boldStyle) {
 export default function FormattedText({ text, textStyle, boldStyle }) {
   if (!text) return null;
 
+  const textIsRTL = RTL_RE.test(text);
+  const dirStyle = textIsRTL
+    ? { textAlign: "right", writingDirection: "rtl" }
+    : { textAlign: "left", writingDirection: "ltr" };
+
+  // Merge direction into base styles so every Text node is consistent
+  const tStyle = [textStyle, dirStyle];
+  const bStyle = [boldStyle, dirStyle];
+  const listRowDir = textIsRTL ? "row-reverse" : "row";
+
   const lines = text.replace(/\r/g, "").split("\n");
   const nodes = [];
   let i = 0;
@@ -54,8 +66,8 @@ export default function FormattedText({ text, textStyle, boldStyle }) {
     // Heading ##
     if (line.startsWith("## ")) {
       nodes.push(
-        <Text key={i} style={boldStyle}>
-          {parseBold(line.slice(3), textStyle, boldStyle)}
+        <Text key={i} style={bStyle}>
+          {parseBold(line.slice(3), tStyle, bStyle)}
         </Text>
       );
       i++;
@@ -65,10 +77,10 @@ export default function FormattedText({ text, textStyle, boldStyle }) {
     // Bullet point (- or * or •)
     if (/^[-*•]\s/.test(line)) {
       nodes.push(
-        <View key={i} style={{ flexDirection: "row", gap: 6, alignItems: "flex-start", marginBottom: 2 }}>
-          <Text style={[textStyle, { lineHeight: (textStyle?.lineHeight ?? 22) }]}>{"•"}</Text>
-          <Text style={[textStyle, { flex: 1 }]}>
-            {parseBold(line.slice(2), textStyle, boldStyle)}
+        <View key={i} style={{ flexDirection: listRowDir, gap: 6, alignItems: "flex-start", marginBottom: 2 }}>
+          <Text style={[textStyle, dirStyle, { lineHeight: textStyle?.lineHeight ?? 22 }]}>{"•"}</Text>
+          <Text style={[textStyle, dirStyle, { flex: 1 }]}>
+            {parseBold(line.slice(2), tStyle, bStyle)}
           </Text>
         </View>
       );
@@ -80,10 +92,10 @@ export default function FormattedText({ text, textStyle, boldStyle }) {
     const nm = line.match(/^(\d+)\.\s(.+)/);
     if (nm) {
       nodes.push(
-        <View key={i} style={{ flexDirection: "row", gap: 6, alignItems: "flex-start", marginBottom: 2 }}>
-          <Text style={[boldStyle, { minWidth: 18 }]}>{nm[1]}.</Text>
-          <Text style={[textStyle, { flex: 1 }]}>
-            {parseBold(nm[2], textStyle, boldStyle)}
+        <View key={i} style={{ flexDirection: listRowDir, gap: 6, alignItems: "flex-start", marginBottom: 2 }}>
+          <Text style={[boldStyle, dirStyle, { minWidth: 18 }]}>{nm[1]}.</Text>
+          <Text style={[textStyle, dirStyle, { flex: 1 }]}>
+            {parseBold(nm[2], tStyle, bStyle)}
           </Text>
         </View>
       );
@@ -93,8 +105,8 @@ export default function FormattedText({ text, textStyle, boldStyle }) {
 
     // Regular paragraph
     nodes.push(
-      <Text key={i} style={textStyle}>
-        {parseBold(line, textStyle, boldStyle)}
+      <Text key={i} style={tStyle}>
+        {parseBold(line, tStyle, bStyle)}
       </Text>
     );
     i++;

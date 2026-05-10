@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCallback, useMemo, useRef } from "react";
 import {
   ActivityIndicator,
@@ -40,8 +40,21 @@ export default function PawloChat() {
   const { t } = useTranslationLoader("pawlo");
   const listRef = useRef(null);
 
-  const { petId, conversationId: initialConvId } = useLocalSearchParams();
+  const { petId, conversationId: initialConvId, _source } = useLocalSearchParams();
   const userId = useCurrentUser();
+  const navigation = useNavigation();
+
+  // When Pawlo is opened via cross-tab push from PetDetailScreen (_source="external")
+  // and the user later taps the chat tab again, pop this screen so the chat list shows.
+  const hasBeenFocusedRef = useRef(false);
+  useFocusEffect(
+    useCallback(() => {
+      if (_source === "external" && hasBeenFocusedRef.current) {
+        navigation.popToTop();
+      }
+      hasBeenFocusedRef.current = true;
+    }, [_source, navigation])
+  );
 
   // ─── Pet context (when entering from pet detail) ───────────────────────────
   const { data: pet } = usePet(petId ?? null);
@@ -83,7 +96,7 @@ export default function PawloChat() {
   });
 
   // ─── Warning / cooldown ────────────────────────────────────────────────────
-  const { warningCount, isBlocked, timeRemaining, recordOffTopic } = usePawloGuard();
+  const { warningCount, isBlocked, timeRemaining, recordOffTopic } = usePawloGuard(userId);
 
   // Show intro header until the user has sent their first message
   const hasUserMessage = messages.some((m) => m.role === "user");

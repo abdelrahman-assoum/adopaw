@@ -37,10 +37,12 @@ export default function NewPassword() {
   const [loading, setLoading] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("info");
 
   function showError(supabaseMessage) {
     const key = mapSupabaseError(supabaseMessage).replace("auth.", "");
     setSnackbarMessage(t(key));
+    setSnackbarType("error");
     setSnackbarVisible(true);
   }
 
@@ -62,6 +64,7 @@ export default function NewPassword() {
       }
 
       setSnackbarMessage(t("newPassword.success"));
+      setSnackbarType("success");
       setSnackbarVisible(true);
       setTimeout(() => router.replace("/login"), 1500);
     } catch (e) {
@@ -82,6 +85,7 @@ export default function NewPassword() {
         visible={snackbarVisible && !loading}
         message={snackbarMessage}
         onDismiss={() => setSnackbarVisible(false)}
+        type={snackbarType}
       />
 
       <View

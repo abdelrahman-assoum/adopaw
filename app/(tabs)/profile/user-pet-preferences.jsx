@@ -78,6 +78,7 @@ export default function UserPetPreferences() {
   const [loading, setLoading] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("info");
 
   // ─── Toggle helpers ───────────────────────────────────────────────────────
   const toggle = (setter) => (value) =>
@@ -98,10 +99,12 @@ export default function UserPetPreferences() {
       };
       await updatePetPreferences(userId, petPreferences);
       setSnackbarMessage(t("petPreferences.saveSuccess", { ns: "profile" }));
+      setSnackbarType("success");
       setSnackbarVisible(true);
       setTimeout(() => router.back(), 1200);
     } catch (err) {
       setSnackbarMessage(t("error.updateFailed", { ns: "profile" }));
+      setSnackbarType("error");
       setSnackbarVisible(true);
     } finally {
       setLoading(false);
@@ -116,6 +119,7 @@ export default function UserPetPreferences() {
         visible={snackbarVisible}
         message={snackbarMessage}
         onDismiss={() => setSnackbarVisible(false)}
+        type={snackbarType}
       />
 
       <ScrollView

@@ -1,20 +1,23 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getOrCreateChat } from "@/src/features/chats/services/chatService";
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
+  Animated,
   I18nManager,
   Image,
   KeyboardAvoidingView,
+  LayoutAnimation,
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  UIManager,
   View,
 } from "react-native";
 import { Text, useTheme } from "react-native-paper";
@@ -29,6 +32,65 @@ import {
 } from "@/src/features/pets/hooks/useAdoptionRequest";
 import { useTranslationLoader } from "@/src/localization/hooks/useTranslationLoader";
 import { supabase } from "@/src/shared/services/supabase/client";
+
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+// ─── Collapsible Section ──────────────────────────────────────────────────────
+
+function CollapsibleSection({
+  label,
+  icon,
+  iconColor,
+  count,
+  countBg,
+  countColor,
+  defaultOpen = false,
+  children,
+}) {
+  const theme = useTheme();
+  const [open, setOpen] = useState(defaultOpen);
+  const chevronAnim = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
+
+  const toggle = () => {
+    const next = !open;
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setOpen(next);
+    Animated.timing(chevronAnim, {
+      toValue: next ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const chevronRotate = chevronAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "180deg"],
+  });
+
+  return (
+    <View>
+      <TouchableOpacity style={styles.sectionHeader} onPress={toggle} activeOpacity={0.7}>
+        <View style={styles.sectionHeaderLeft}>
+          <Ionicons name={icon} size={13} color={iconColor} />
+          <Text style={[styles.sectionLabel, { color: theme.colors.palette.neutral[600] }]}>
+            {label}
+          </Text>
+        </View>
+        <View style={styles.sectionHeaderRight}>
+          <View style={[styles.countBadge, { backgroundColor: countBg }]}>
+            <Text style={[styles.countText, { color: countColor }]}>{count}</Text>
+          </View>
+          <Animated.View style={{ transform: [{ rotate: chevronRotate }] }}>
+            <Ionicons name="chevron-down" size={16} color={theme.colors.palette.neutral[400]} />
+          </Animated.View>
+        </View>
+      </TouchableOpacity>
+      {open && <View style={styles.sectionBody}>{children}</View>}
+    </View>
+  );
+}
 
 // ─── Request Card ────────────────────────────────────────────────────────────
 
@@ -67,7 +129,6 @@ function RequestCard({ request, tab, userId }) {
 
   const pet = request.pet;
   const personName = tab === "sent" ? pet?.owner?.name : request.requester?.name;
-  const personAvatar = tab === "sent" ? pet?.owner?.avatar_url : request.requester?.avatar_url;
   const imageUri = Array.isArray(pet?.images) ? pet.images[0] : pet?.images ?? null;
 
   const isMale = pet?.gender?.toLowerCase() === "male";
@@ -79,7 +140,7 @@ function RequestCard({ request, tab, userId }) {
   const handleCancel = () => {
     Alert.alert(t("requests.cancelConfirmTitle"), t("requests.cancelConfirmMessage"), [
       { text: t("common.cancel"), style: "cancel" },
-      { text: t("requests.cancel"), style: "destructive", onPress: () => cancelRequest(request.id) },
+      { text: t("common.confirm"), style: "destructive", onPress: () => cancelRequest(request.id) },
     ]);
   };
 
@@ -309,6 +370,33 @@ function RequestCard({ request, tab, userId }) {
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
+const SECTION_CONFIGS = [
+  {
+    key: "pending",
+    icon: "time-outline",
+    iconColor: "#D49940",
+    countBg: "#FFF1DB",
+    countColor: "#D49940",
+    defaultOpen: true,
+  },
+  {
+    key: "accepted",
+    icon: "checkmark-circle-outline",
+    iconColor: "#2D9B66",
+    countBg: "#BCE8D3",
+    countColor: "#2D9B66",
+    defaultOpen: false,
+  },
+  {
+    key: "declined",
+    icon: "close-circle-outline",
+    iconColor: "#AF2E2E",
+    countBg: "#F6D7D7",
+    countColor: "#AF2E2E",
+    defaultOpen: false,
+  },
+];
+
 export default function RequestsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -330,6 +418,19 @@ export default function RequestsScreen() {
 
   const requests = tab === "sent" ? sentRequests : receivedRequests;
   const isLoading = tab === "sent" ? loadingSent : loadingReceived;
+
+  const groupedRequests = useMemo(() => {
+    const groups = { pending: [], accepted: [], declined: [] };
+    for (const req of requests) {
+      const status = req.status ?? "pending";
+      if (groups[status]) groups[status].push(req);
+    }
+    return groups;
+  }, [requests]);
+
+  const visibleSections = SECTION_CONFIGS.filter(
+    (s) => groupedRequests[s.key].length > 0
+  );
 
   const isDark = theme.dark;
   const bg = isDark ? theme.colors.palette.neutral[900] : "#EDF1F4";
@@ -379,7 +480,7 @@ export default function RequestsScreen() {
         })}
       </View>
 
-      {/* List */}
+      {/* Content */}
       {isLoading ? (
         <ActivityIndicator style={{ flex: 1 }} color={theme.colors.primary} />
       ) : requests.length === 0 ? (
@@ -390,14 +491,37 @@ export default function RequestsScreen() {
           </Text>
         </View>
       ) : (
-        <FlatList
-          data={requests}
-          keyExtractor={(item) => item.id}
+        <ScrollView
+          key={tab}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <RequestCard request={item} tab={tab} userId={userId} />
-          )}
-        />
+          showsVerticalScrollIndicator={false}
+        >
+          {visibleSections.map((section, index) => (
+            <View key={section.key}>
+              {index > 0 && (
+                <View
+                  style={[
+                    styles.divider,
+                    { backgroundColor: theme.colors.palette.neutral[200] },
+                  ]}
+                />
+              )}
+              <CollapsibleSection
+                label={t(`requests.${section.key}`).toUpperCase()}
+                icon={section.icon}
+                iconColor={section.iconColor}
+                count={groupedRequests[section.key].length}
+                countBg={section.countBg}
+                countColor={section.countColor}
+                defaultOpen={section.defaultOpen}
+              >
+                {groupedRequests[section.key].map((req) => (
+                  <RequestCard key={req.id} request={req} tab={tab} userId={userId} />
+                ))}
+              </CollapsibleSection>
+            </View>
+          ))}
+        </ScrollView>
       )}
     </View>
   );
@@ -449,7 +573,6 @@ const styles = StyleSheet.create({
   list: {
     paddingHorizontal: 20,
     paddingBottom: 32,
-    gap: 12,
   },
   emptyContainer: {
     flex: 1,
@@ -461,6 +584,49 @@ const styles = StyleSheet.create({
     fontFamily: "Alexandria_400Regular",
     fontSize: 15,
     lineHeight: 22,
+  },
+
+  // ── Section ───────────────────────────────────────────────────────────────
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+  },
+  sectionHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+  },
+  sectionLabel: {
+    fontFamily: "Alexandria_500Medium",
+    fontSize: 11,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  sectionHeaderRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  countBadge: {
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  countText: {
+    fontFamily: "Alexandria_500Medium",
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  sectionBody: {
+    gap: 10,
+    paddingBottom: 4,
+  },
+  divider: {
+    height: 1,
+    marginVertical: 2,
+    opacity: 0.5,
   },
 
   // ── Card ─────────────────────────────────────────────────────────────────
@@ -483,7 +649,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#F0F0F0",
     flexShrink: 0,
-    // top row inline — keep as a sibling
   },
   imageFallback: {
     alignItems: "center",
@@ -528,18 +693,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-  },
-  personAvatar: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-  },
-  personAvatarFallback: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
   },
   personName: {
     fontFamily: "Alexandria_400Regular",

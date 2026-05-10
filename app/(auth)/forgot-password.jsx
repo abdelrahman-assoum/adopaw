@@ -85,6 +85,7 @@ export default function ForgotPassword() {
         visible={snackbarVisible && !loading}
         message={snackbarMessage}
         onDismiss={() => setSnackbarVisible(false)}
+        type="error"
       />
 
       <View

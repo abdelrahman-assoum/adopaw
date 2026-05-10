@@ -90,10 +90,14 @@ export function usePawloConversation({ userId, initialConversationId = null, pet
     [userId, petId, petContext]
   );
 
-  // ─── Init on mount ────────────────────────────────────────────────────────────
+  // ─── Init on mount / when userId or petId changes ────────────────────────────
 
   useEffect(() => {
     if (!userId) return;
+    // Reset immediately so we never flash stale messages from a previous pet
+    setMessages([]);
+    setConversationId(null);
+    setInitializing(true);
     (async () => {
       if (initialConversationId) {
         await loadConversation(initialConversationId);
@@ -112,7 +116,7 @@ export function usePawloConversation({ userId, initialConversationId = null, pet
         }
       }
     })();
-  }, [userId]); // intentionally only on userId change
+  }, [userId, petId]); // petId added so switching pets always opens a fresh conversation
 
   // ─── Send message ─────────────────────────────────────────────────────────────
 

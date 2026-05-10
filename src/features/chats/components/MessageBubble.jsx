@@ -2,6 +2,10 @@ import { useMemo } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { Surface, Text, useTheme } from "react-native-paper";
 
+// Matches Arabic, Arabic Extended, Hebrew, Syriac, and Arabic Presentation Forms
+const RTL_RE = /[֐-׿؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+const isRTL = (text) => RTL_RE.test(text);
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BUBBLE_MAX_WIDTH = SCREEN_WIDTH * 0.72;
 
@@ -29,6 +33,8 @@ export default function MessageBubble({ item, currentUserId }) {
   }, [item?.createdAt]);
 
   const isPending = !!item?.pending;
+  const text = item?.content?.text ?? "";
+  const textIsRTL = text ? isRTL(text) : false;
 
   return (
     <View style={[styles.row, { justifyContent: isMine ? "flex-end" : "flex-start" }]}>
@@ -40,12 +46,18 @@ export default function MessageBubble({ item, currentUserId }) {
           { backgroundColor: isMine ? bgMine : bgOther, opacity: isPending ? 0.65 : 1 },
         ]}
       >
-        {!!item?.content?.text && (
+        {!!text && (
           <Text
-            style={[styles.text, { color: isMine ? fgMine : fgOther }]}
+            style={[
+              styles.text,
+              { color: isMine ? fgMine : fgOther },
+              textIsRTL
+                ? { textAlign: "right", writingDirection: "rtl" }
+                : { textAlign: "left", writingDirection: "ltr" },
+            ]}
             variant="bodyMedium"
           >
-            {item.content.text}
+            {text}
           </Text>
         )}
         <View style={styles.footer}>
