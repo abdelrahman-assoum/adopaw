@@ -20,14 +20,9 @@ export default function UserLanguageScreen() {
   }, []);
 
   const handleSelect = async (value) => {
-    const prev = selected;
-    try {
-      setSelected(value);
-      await setLanguage(value);
-    } catch (error) {
-      console.error("Error changing language:", error);
-      setSelected(prev);
-    }
+    if (selected === value) return;
+    setSelected(value);
+    await setLanguage(value);
   };
 
   return (
@@ -39,6 +34,7 @@ export default function UserLanguageScreen() {
             <TouchableOpacity
               key={option.value}
               onPress={() => handleSelect(option.value)}
+              activeOpacity={0.85}
               style={{ marginVertical: 2, width: "100%" }}
             >
               <Surface
@@ -52,17 +48,13 @@ export default function UserLanguageScreen() {
                     borderWidth: 1,
                     borderColor: isSelected
                       ? (colors.palette?.blue?.[500] ?? "#007BFF")
-                      : (colors.palette?.neutral?.[500] ?? "#AAAAAA"),
+                      : (colors.palette?.neutral?.[200] ?? "#DDDDDD"),
                   },
                 ]}
               >
                 <View style={styles.row}>
-                  <Image
-                    source={option.image}
-                    style={{ width: 24, height: 24, marginRight: 8 }}
-                    resizeMode="contain"
-                  />
-                  <Text style={[styles.label, { color: isSelected ? colors.primary : colors.text }]}>
+                  <Image source={option.image} style={styles.flag} resizeMode="contain" />
+                  <Text style={[styles.label, { color: isSelected ? colors.primary : colors.onSurface }]}>
                     {option.label}
                   </Text>
                 </View>
@@ -92,6 +84,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flexShrink: 1,
+    gap: 10,
+  },
+  flag: {
+    width: 26,
+    height: 26,
   },
   label: {
     fontSize: 16,

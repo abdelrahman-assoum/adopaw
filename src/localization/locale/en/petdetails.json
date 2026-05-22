@@ -73,5 +73,7 @@
   "confirmReopenMessage": "This will make the pet available again and remove all previous adoption requests.",
   "reopenSuccess": "Pet is available for adoption again.",
   "reopenErrorTitle": "Error",
-  "reopenErrorMessage": "Failed to reopen the pet. Please try again."
+  "reopenErrorMessage": "Failed to reopen the pet. Please try again.",
+  "pawloTitle": "Ask Pawlo about {{name}}",
+  "pawloSubtitle": "AI-powered pet advice, just for you"
 }

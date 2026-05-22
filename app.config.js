@@ -7,14 +7,16 @@ module.exports = ({ config }) => {
   }
   return {
     ...config,
-    plugins: [...(config.plugins || []), "expo-font", "expo-web-browser", "expo-localization"],
+    plugins: [...(config.plugins || []), "expo-web-browser"],
     android: {
+      ...config.android, // preserve package, adaptiveIcon, etc. from app.json
       config: {
         googleMaps: { apiKey: googleMapsKey || "" },
       },
       softwareKeyboardLayoutMode: "resize",
     },
     ios: {
+      ...config.ios, // preserve supportsTablet etc. from app.json
       config: {
         googleMapsApiKey: googleMapsKey,
       },

@@ -12,11 +12,10 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.abdelrahmanassoum.adopaw",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./src/assets/images/android-icon-foreground.png",
-        "backgroundImage": "./src/assets/images/android-icon-background.png",
-        "monochromeImage": "./src/assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "backgroundColor": "#E6F4FE"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
@@ -39,8 +38,20 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["en", "ar"],
+            "android": ["en", "ar"]
+          }
+        }
+      ]
     ],
+    "extra": {
+      "supportsRTL": true
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

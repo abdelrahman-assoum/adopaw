@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
+  I18nManager,
   Image,
   Modal,
   Pressable,
@@ -276,14 +277,24 @@ export default function PetDetailScreen() {
 
       {/* Hero image carousel */}
       <View style={styles.heroContainer}>
-        <Pressable onPress={() => router.back()} style={styles.backIcon}>
+        <Pressable
+          onPress={() => router.back()}
+          style={[styles.backIcon, I18nManager.isRTL ? { right: 20 } : { left: 20 }]}
+        >
           <View style={styles.backIconWrapper}>
-            <Ionicons name="arrow-back" size={24} color={theme.colors.palette.blue[500]} />
+            <Ionicons
+              name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"}
+              size={24}
+              color={theme.colors.palette.blue[500]}
+            />
           </View>
         </Pressable>
 
         {isOwner && (
-          <Pressable onPress={() => setMenuVisible(true)} style={styles.menuIcon}>
+          <Pressable
+            onPress={() => setMenuVisible(true)}
+            style={[styles.menuIcon, I18nManager.isRTL ? { left: 20 } : { right: 20 }]}
+          >
             <View style={styles.menuButton}>
               <Ionicons name="ellipsis-vertical" size={22} color={theme.colors.palette.blue[500]} />
             </View>
@@ -369,16 +380,16 @@ export default function PetDetailScreen() {
           {/* Text */}
           <View style={styles.pawloTextArea}>
             <Text style={[styles.pawloTitle, { color: isDark ? theme.colors.palette.blue[100] : theme.colors.palette.blue[800] }]}>
-              Ask Pawlo about {pet.name}
+              {t("pawloTitle", { name: pet.name })}
             </Text>
             <Text style={[styles.pawloSubtitle, { color: isDark ? theme.colors.palette.blue[300] : theme.colors.palette.blue[600] }]}>
-              AI-powered pet advice, just for you
+              {t("pawloSubtitle")}
             </Text>
           </View>
 
           {/* Arrow pill */}
           <View style={[styles.pawloArrow, { backgroundColor: theme.colors.palette.blue[500] }]}>
-            <Ionicons name="chevron-forward" size={15} color="#fff" />
+            <Ionicons name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"} size={15} color="#fff" />
           </View>
         </TouchableOpacity>
 
@@ -450,7 +461,7 @@ export default function PetDetailScreen() {
         onRequestClose={() => setMenuVisible(false)}
       >
         <Pressable style={StyleSheet.absoluteFill} onPress={() => setMenuVisible(false)} />
-        <View style={[styles.customMenu, { backgroundColor: menuBg }]}>
+        <View style={[styles.customMenu, { backgroundColor: menuBg }, I18nManager.isRTL ? { left: 16, right: undefined } : { right: 16 }]}>
           {pet.status === "adopted" ? (
             <TouchableOpacity style={styles.menuRow} onPress={handleReopenPet} activeOpacity={0.7}>
               <Ionicons name="refresh-outline" size={20} color={menuTextColor} />
@@ -507,7 +518,7 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgray",
   },
   carouselImage: { width: SCREEN_WIDTH, height: 350 },
-  backIcon: { position: "absolute", top: 50, left: 20, zIndex: 10 },
+  backIcon: { position: "absolute", top: 50, zIndex: 10 },
   backIconWrapper: {
     backgroundColor: "white",
     padding: 8,
@@ -518,7 +529,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  menuIcon: { position: "absolute", top: 50, right: 20, zIndex: 10 },
+  menuIcon: { position: "absolute", top: 50, zIndex: 10 },
   menuButton: {
     backgroundColor: "white",
     padding: 8,
@@ -652,7 +663,6 @@ const styles = StyleSheet.create({
   customMenu: {
     position: "absolute",
     top: 108,
-    right: 16,
     borderRadius: 8,
     padding: 8,
     shadowColor: "#000",

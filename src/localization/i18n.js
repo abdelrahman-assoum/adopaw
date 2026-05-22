@@ -6,74 +6,35 @@ import { I18nManager } from "react-native";
 import translationRegistry from "./utils/translationRegistry";
 
 const LANGUAGE_PREFERENCE_KEY = "user-language";
-
-// 👇 Define which languages are RTL
-const RTL_LANGUAGES = ["ar", "he", "fa", "ur"]; // Add more if needed
-
-// Derive namespace list from whatever is registered — grows automatically
-// as you add more namespaces to translationRegistry.js
+const RTL_LANGUAGES = ["ar", "he", "fa", "ur"];
 const namespaces = Object.keys(translationRegistry.en);
 
 i18n.use(initReactI18next).init({
   fallbackLng: "en",
   lng: "en",
-  isRTL: false,
-  resources: translationRegistry, // all translations available immediately, no backend needed
+  resources: translationRegistry,
   ns: namespaces,
   defaultNS: namespaces[0] ?? "common",
   interpolation: { escapeValue: false },
 });
 
-// Helper function to set up RTL
-const setupRTL = async (lng, forceReload = true, prev) => {
-  const isRTL = RTL_LANGUAGES.includes(lng);
-
-  console.log("Setting up RTL for language:", lng, "isRTL:", isRTL);
-  console.log("Current I18nManager.isRTL:", I18nManager.isRTL);
-
-  if (I18nManager.isRTL !== isRTL) {
-    I18nManager.allowRTL(isRTL);
-    I18nManager.forceRTL(isRTL);
-
-    if (forceReload) {
-      setTimeout(async () => {
-        try {
-          await Updates.reloadAsync();
-        } catch (e) {
-          console.warn("App reload unavailable (dev mode):", e.message);
-        }
-      }, 300);
-    }
-  }
-  if (RTL_LANGUAGES.includes(prev)) {
-    I18nManager.allowRTL(isRTL);
-    I18nManager.forceRTL(isRTL);
-
-    if (forceReload) {
-      setTimeout(async () => {
-        try {
-          await Updates.reloadAsync();
-        } catch (e) {
-          console.warn("App reload unavailable (dev mode):", e.message);
-        }
-      }, 300);
-    }
-  }
+const applyRTL = (lng) => {
+  const shouldBeRTL = RTL_LANGUAGES.includes(lng);
+  I18nManager.allowRTL(shouldBeRTL);
+  I18nManager.forceRTL(shouldBeRTL);
 };
 
 export const setLanguage = async (lng) => {
   try {
-    // Save language
     await AsyncStorage.setItem(LANGUAGE_PREFERENCE_KEY, lng);
-    const prev = i18n.language;
-    // Change i18n language
-    if (prev === lng) return;
+    if (i18n.language === lng) return;
+    applyRTL(lng);
     await i18n.changeLanguage(lng);
-
-    // Set up RTL
-    await setupRTL(lng, true, prev);
-
-    console.log("Language set to:", lng);
+    try {
+      await Updates.reloadAsync();
+    } catch {
+      // Dev builds: reloadAsync unavailable
+    }
   } catch (error) {
     console.error("Error setting language:", error);
   }
@@ -83,8 +44,8 @@ export const initializeLanguageAndRTL = async () => {
   try {
     const storedLang = await AsyncStorage.getItem(LANGUAGE_PREFERENCE_KEY);
     if (storedLang) {
+      applyRTL(storedLang);
       await i18n.changeLanguage(storedLang);
-      await setupRTL(storedLang, false); // Don't force reload during initialization
     }
     return storedLang;
   } catch (error) {
@@ -95,16 +56,13 @@ export const initializeLanguageAndRTL = async () => {
 
 export const getStoredLanguage = async () => {
   try {
-    const storedLang = await AsyncStorage.getItem(LANGUAGE_PREFERENCE_KEY);
-    return storedLang || null;
+    return (await AsyncStorage.getItem(LANGUAGE_PREFERENCE_KEY)) || null;
   } catch (error) {
     console.error("Error getting stored language:", error);
     return null;
   }
 };
 
-export const isRTL = (lng) => {
-  return RTL_LANGUAGES.includes(lng);
-};
+export const isRTL = (lng) => RTL_LANGUAGES.includes(lng);
 
 export default i18n;
